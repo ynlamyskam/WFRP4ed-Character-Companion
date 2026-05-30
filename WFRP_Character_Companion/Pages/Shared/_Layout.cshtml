@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WFRP_Character_Companion</title>
+    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WFRP_Character_Companion.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="d-flex">
+
+        <!-- SIDEBAR -->
+        <aside class="bg-white border-end vh-100 p-3 d-flex flex-column"
+               style="width: 260px;">
+
+            <div class="mb-4">
+                <a class="text-decoration-none text-dark fw-bold" asp-page="/Index">
+                    WFRP Companion
+                </a>
+            </div>
+
+            <ul class="nav flex-column gap-2">
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-page="/Index">
+                        Strona Główna
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-page="/CharacterHub">
+                        Lista Postaci
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="mt-auto pt-3 border-top">
+
+                <partial name="_LoginPartial" />
+
+            </div>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-grow-1 p-4">
+
+            @RenderBody()
+
+        </main>
+
+    </div>
+
+    <footer class="text-muted border-top p-2 text-center">
+        &copy; 2026 - WFRP_Character_Companion
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

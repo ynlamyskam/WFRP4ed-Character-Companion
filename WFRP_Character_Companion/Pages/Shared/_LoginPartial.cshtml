@@ -1,0 +1,41 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WFRP_Character_Companion.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var appUser = await UserManager.GetUserAsync(User);
+}
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item">
+            <div class="d-flex align-items-center gap-2">
+
+                @if (appUser?.AvatarFileName != null)
+                {
+                    <img src="/avatars/@appUser.AvatarFileName"
+                         style="width:32px;height:32px;border-radius:50%;object-fit:cover;" />
+                }
+
+                @* <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a> *@
+                <a class=" nav-link" asp-page="/Profile">@appUser?.DisplayName</a>
+            </div>
+    </li>
+    <li class="nav-item">
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+            <button  type="submit" class="nav-link btn btn-link text-dark">Wyloguj się</button>
+        </form>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Rejestracja</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Logowanie</a>
+    </li>
+}
+</ul>

@@ -1,0 +1,35 @@
+﻿@page
+@using WFRP_Character_Companion.Models
+@inject UserManager<ApplicationUser> UserManager
+@model WFRP_Character_Companion.Pages.ProfileModel
+@{
+    <h2>Profil użytkownika</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        <div>
+            <label>Nazwa użytkownika</label>
+            <input asp-for="Input.DisplayName" />
+        </div>
+
+        <div>
+            <label>Awatar</label>
+            <input asp-for="Input.AvatarFile" type="file" accept=".png,.jpg,.jpeg" />
+        </div>
+
+        <button type="submit">Zapisz</button>
+    </form>
+
+    <hr />
+
+    <h3>Podgląd</h3>
+
+    <p><strong>@Model.Input.DisplayName</strong></p>
+
+    var appUser = await UserManager.GetUserAsync(User);
+
+    if (appUser?.AvatarFileName != null)
+    {
+        <img src="/avatars/@appUser.AvatarFileName"
+             style="width:100px;height:100px;border-radius:50%;object-fit:cover;" />
+    }
+}
