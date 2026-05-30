@@ -1,0 +1,24 @@
+﻿@page
+@model WFRP_Character_Companion.Pages.Characters.CreateModel
+@{
+    <h2>Nowa postać</h2>
+
+    <form method="post">
+
+        <input asp-for="Input.Name" placeholder="Name" class="form-control" />
+
+        <input asp-for="Input.WeaponSkillBasic" placeholder="WS" class="form-control" />
+        <input asp-for="Input.BallisticSkillBasic" placeholder="BS" class="form-control" />
+        <input asp-for="Input.StrengthBasic" placeholder="S" class="form-control" />
+        <input asp-for="Input.ToughnessBasic" placeholder="T" class="form-control" />
+        <input asp-for="Input.InitiativeBasic" placeholder="I" class="form-control" />
+        <input asp-for="Input.AgilityBasic" placeholder="Ag" class="form-control" />
+        <input asp-for="Input.DexterityBasic" placeholder="Dex" class="form-control" />
+        <input asp-for="Input.IntelligenceBasic" placeholder="Int" class="form-control" />
+        <input asp-for="Input.WillpowerBasic" placeholder="WP" class="form-control" />
+        <input asp-for="Input.FellowshipBasic" placeholder="Fel" class="form-control" />
+
+        <button class="btn btn-primary mt-3">Create</button>
+
+    </form>
+}

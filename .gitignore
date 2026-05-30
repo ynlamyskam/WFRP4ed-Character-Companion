@@ -10,10 +10,6 @@ obj/
 *.userosscache
 *.sln.docstates
 
-# Entity Framework Core
-Migrations/*Designer.cs
-Migrations/*Snapshot.cs
-
 # Local databases
 *.db
 *.sqlite
@@ -35,3 +31,31 @@ secrets.json
 # OS
 .DS_Store
 Thumbs.db
+
+#Ignore thumbnails created by Windows
+#Ignore files built by Visual Studio
+*.obj
+*.exe
+*.pdb
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+[Bb]in
+[Dd]ebug*/
+*.lib
+*.sbr
+[Rr]elease*/
+_ReSharper*/
+[Tt]est[Rr]esult*
+.idea/
+
+#Nuget packages folder
+packages/

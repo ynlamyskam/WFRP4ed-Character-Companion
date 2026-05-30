@@ -1,0 +1,20 @@
+﻿@page
+@model WFRP_Character_Companion.Pages.Characters.CharacterHubModel
+
+<h2>Twoje postacie</h2>
+
+@if (Model.Characters.Count == 0)
+{
+    <p>Nie masz jeszcze żadnych postaci.</p>
+}
+else
+{
+    <ul>
+        @foreach (var c in Model.Characters)
+        {
+            <li>
+                @c.Name (WS: @c.WeaponSkillBasic)
+            </li>
+        }
+    </ul>
+}
