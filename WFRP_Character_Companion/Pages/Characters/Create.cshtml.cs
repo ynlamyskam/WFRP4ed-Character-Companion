@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WFRP_Character_Companion.Data;
 using WFRP_Character_Companion.Models;
+using WFRP_Character_Companion.Models.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace WFRP_Character_Companion.Pages.Characters
 {
@@ -14,18 +16,60 @@ namespace WFRP_Character_Companion.Pages.Characters
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
         [BindProperty]
-        public Character Input { get; set; } = new Character();
+        public CreateCharacterViewModel Input { get; set; } = new();
+
+        public List<Skill> AllSkills { get; set; } = [];
+        public List<Talent> AllTalents { get; set; } = [];
+
+        public async Task OnGetAsync()
+        {
+            AllSkills = await _db.Skills
+                .OrderBy(s => s.Name)
+                .ToListAsync();
+
+            AllTalents = await _db.Talents
+                .OrderBy(t => t.Name)
+                .ToListAsync();
+        }
 
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            
             if (user == null)
                 return Unauthorized();
-        
-            Input.UserId = user.Id;
 
-            _db.Characters.Add(Input);
+            var character = new Character
+            {
+                Name = Input.Name,
+                UserId = user.Id,
+
+                Attributes = Input.Attributes.Select(a => new CharacterAttribute
+                {
+                    Type = a.Type,
+                    Basic = a.Basic,
+                    Advance = a.Advance
+                }).ToList(),
+
+                Skills = Input.Skills
+                    .Where(s => s.SkillId > 0)
+                    .Select(s => new CharacterSkill
+                    {
+                        SkillId = s.SkillId,
+                        Advances = s.Advances
+                    })
+                    .ToList(),
+
+                Talents = Input.Talents
+                    .Where(t => t.TalentId > 0)
+                    .Select(t => new CharacterTalent
+                    {
+                        TalentId = t.TalentId,
+                        Level = t.Level
+                    })
+                    .ToList()
+            };
+
+            _db.Characters.Add(character);
             await _db.SaveChangesAsync();
 
             return RedirectToPage("/Characters/CharacterHub");

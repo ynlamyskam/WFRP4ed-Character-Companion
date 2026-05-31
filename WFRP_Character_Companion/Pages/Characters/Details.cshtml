@@ -1,0 +1,213 @@
+﻿@page
+@using WFRP_Character_Companion.Helpers
+@using WFRP_Character_Companion.Services
+@model WFRP_Character_Companion.Pages.Characters.DetailsModel
+@{
+    <h2>@Model.Character.Name</h2>
+
+    <ul class="nav nav-tabs" id="characterTabs" role="tablist">
+
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#bio">
+                Opis
+            </button>
+        </li>
+
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#stats">
+                Statystyki
+            </button>
+        </li>
+
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#gear">
+                Ekwipunek
+            </button>
+        </li>
+
+    </ul>
+
+    <div class="tab-content p-3 border border-top-0">
+
+        <!-- Basic Info -->
+        <div class="tab-pane fade show active" id="bio">
+            <p><b>Wiek:</b> </p>
+            <p><b>Wzrost:</b> </p>
+            <p><b>Waga:</b> </p>
+            <p><b>Kolor oczu:</b> </p>
+            <p><b>Kolor włosów:</b> </p>
+        </div>
+
+        <!-- Stats -->
+        <div class="tab-pane fade" id="stats">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th></th>
+                        @foreach (var attr in Model.Character.Attributes.OrderBy(a => a.Type))
+                        {
+                            <th>@attr.Type.GetDisplayName()</th>
+                        }
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <th>Początkowa</th>
+                        @foreach (var attr in Model.Character.Attributes.OrderBy(a => a.Type))
+                        {
+                            <td>@attr.Basic</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Rozwinięcia</th>
+                        @foreach (var attr in Model.Character.Attributes.OrderBy(a => a.Type))
+                        {
+                            <td>@attr.Advance</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Aktualna</th>
+                        @foreach (var attr in Model.Character.Attributes.OrderBy(a => a.Type))
+                        {
+                            <td>@attr.Total</td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Umiejętności podstawowe</h4>
+
+            <table class="table table-sm table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th>Umiejętność</th>
+                        <th>Cecha</th>
+                        <th>Baza</th>
+                        <th>Rozwój</th>
+                        <th>Suma</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var skill in Model.AllSkills.Where(s => !s.IsAdvanced))
+                    {
+                        Model.SkillLookup.TryGetValue(skill.Id, out var charSkill);
+
+                        var advances = charSkill?.Advances ?? 0;
+
+                        var attr = Model.AttributeLookup[skill.GoverningAttribute];
+
+                        var baseValue = attr.Basic + attr.Advance;
+                        var total = baseValue + advances;
+
+                        <tr>
+                            <td>@skill.Name</td>
+                            <td>@skill.GoverningAttribute.GetDisplayName()</td>
+                            <td>@baseValue</td>
+                            <td>@advances</td>
+                            <td>@total</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h4>Umiejętności zaawansowane</h4>
+
+            <table class="table table-sm table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th>Umiejętność</th>
+                        <th>Cecha</th>
+                        <th>Baza</th>
+                        <th>Rozwój</th>
+                        <th>Suma</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var skill in Model.AllSkills.Where(s => s.IsAdvanced))
+                    {
+                        Model.SkillLookup.TryGetValue(skill.Id, out var charSkill);
+
+                        var advances = charSkill?.Advances ?? 0;
+
+                        var attr = Model.AttributeLookup[skill.GoverningAttribute];
+
+                        var baseValue = attr.Basic + attr.Advance;
+                        var total = baseValue + advances;
+
+                        <tr>
+                            <td>@skill.Name</td>
+                            <td>@skill.GoverningAttribute.GetDisplayName()</td>
+                            <td>@baseValue</td>
+                            <td>@advances</td>
+                            <td>@total</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h4>Talenty</h4>
+
+            <table class="table table-sm table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th>Talent</th>
+                        <th>Poziom</th>
+                        <th>Opis</th>
+                        <th>Bonus do Testów</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var t in Model.Character.Talents)
+                    {
+                        var max = Model.TalentRules.GetMaxLevel(Model.Character, t.Talent);
+                        var effects = t.Talent.TestEffects;
+
+                        <tr>
+                            <td>@t.Talent.Name</td>
+                            <td>@t.Level / @max</td>
+                            <td>@t.Talent.Description</td>
+
+                            <td>
+                                @if (effects == null || !effects.Any())
+                                {
+                                    <span class="text-muted">Brak</span>
+                                }
+                                else
+                                {
+                                    foreach (var e in effects)
+                                    {
+                                        var effectiveLevel = Math.Max(t.Level, 1);
+                                        var bonus = (effectiveLevel - 1) * e.BonusPerLevelAbove1;
+
+                                        <div>
+                                            <strong>@e.SkillName</strong>
+
+                                            @if (!string.IsNullOrEmpty(e.Condition))
+                                            {
+                                                <span> (@e.Condition)</span>
+                                            }
+
+                                            : <span class="text-success">+@bonus PS</span>
+                                        </div>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Equipment -->
+        <div class="tab-pane fade" id="gear">
+            <p>Tu będzie ekwipunek</p>
+        </div>
+
+    </div>
+}

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace WFRP_Character_Companion.Models
 {
@@ -14,15 +14,28 @@ namespace WFRP_Character_Companion.Models
 
         public ApplicationUser User { get; set; } = default!;
 
-        public int WeaponSkillBasic { get; set; } = 0;
-        public int BallisticSkillBasic { get; set; } = 0;
-        public int StrengthBasic { get; set; } = 0;
-        public int ToughnessBasic { get; set; } = 0;
-        public int InitiativeBasic { get; set; } = 0;
-        public int AgilityBasic { get; set; } = 0;
-        public int DexterityBasic { get; set; } = 0;
-        public int IntelligenceBasic { get; set; } = 0;
-        public int WillpowerBasic { get; set; } = 0;
-        public int FellowshipBasic { get; set; } = 0;
+        public ICollection<CharacterAttribute> Attributes { get; set; }
+            = [];
+
+        public ICollection<CharacterSkill> Skills { get; set; }
+        = [];
+
+        public ICollection<CharacterTalent> Talents { get; set; }
+            = [];
+
+
+        public CharacterSkill? GetSkill(int skillId)
+        {
+            return Skills.FirstOrDefault(s => s.SkillId == skillId);
+        }
+
+        public int GetSkillTotal(Skill skill)
+        {
+            var advances = Skills.FirstOrDefault(s => s.SkillId == skill.Id)?.Advances ?? 0;
+
+            var attribute = Attributes.First(a => a.Type == skill.GoverningAttribute);
+
+            return attribute.Basic + attribute.Advance + advances;
+        }
     }
 }

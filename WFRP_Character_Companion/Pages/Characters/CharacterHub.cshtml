@@ -13,7 +13,9 @@ else
         @foreach (var c in Model.Characters)
         {
             <li>
-                @c.Name (WS: @c.WeaponSkillBasic)
+                <a asp-page="/Characters/Details" asp-route-id="@c.Id">
+                    @c.Name
+                </a>
             </li>
         }
     </ul>

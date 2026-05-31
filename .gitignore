@@ -12,6 +12,8 @@ obj/
 
 # Local databases
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 *.mdf
@@ -59,3 +61,4 @@ _ReSharper*/
 
 #Nuget packages folder
 packages/
+/WFRP_Character_Companion/wwwroot/avatars/*

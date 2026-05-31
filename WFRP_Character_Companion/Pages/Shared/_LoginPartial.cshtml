@@ -20,7 +20,11 @@
                 }
 
                 @* <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a> *@
-                <a class=" nav-link" asp-page="/Profile">@appUser?.DisplayName</a>
+                <a class="nav-link" asp-page="/Profile">
+                    @(string.IsNullOrWhiteSpace(appUser?.DisplayName)
+                        ? "Profil"
+                        : appUser.DisplayName)
+                </a>
             </div>
     </li>
     <li class="nav-item">
