@@ -11,8 +11,8 @@ using WFRP_Character_Companion.Data;
 namespace WFRP_Character_Companion.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260530163513_AddUserProfile")]
-    partial class AddUserProfile
+    [Migration("20260531140350_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,7 +156,7 @@ namespace WFRP_Character_Companion.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AvatarUrl")
+                    b.Property<string>("AvatarFileName")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -219,6 +219,175 @@ namespace WFRP_Character_Companion.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Characters");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterAttribute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Advance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Basic")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.ToTable("CharacterAttribute");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterSkill", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Advances")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Specialization")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("CharacterSkills");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterTalent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TalentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("TalentId");
+
+                    b.ToTable("CharacterTalents");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Skill", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GoverningAttribute")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("HasSpecialization")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsAdvanced")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Skills");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Talent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("FixedMaxLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.PrimitiveCollection<string>("MaxLevelAttributes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MaxLevelType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Talents");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.TalentTestEffect", b =>
+                {
+                    b.Property<int>("TalentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SkillName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("BonusPerLevelAbove1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Condition")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TalentId", "SkillName");
+
+                    b.ToTable("TalentTestEffects");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -268,6 +437,91 @@ namespace WFRP_Character_Companion.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>
+                {
+                    b.HasOne("WFRP_Character_Companion.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterAttribute", b =>
+                {
+                    b.HasOne("WFRP_Character_Companion.Models.Character", "Character")
+                        .WithMany("Attributes")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterSkill", b =>
+                {
+                    b.HasOne("WFRP_Character_Companion.Models.Character", "Character")
+                        .WithMany("Skills")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WFRP_Character_Companion.Models.Skill", "Skill")
+                        .WithMany()
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterTalent", b =>
+                {
+                    b.HasOne("WFRP_Character_Companion.Models.Character", "Character")
+                        .WithMany("Talents")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WFRP_Character_Companion.Models.Talent", "Talent")
+                        .WithMany()
+                        .HasForeignKey("TalentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Talent");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.TalentTestEffect", b =>
+                {
+                    b.HasOne("WFRP_Character_Companion.Models.Talent", "Talent")
+                        .WithMany("TestEffects")
+                        .HasForeignKey("TalentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Talent");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>
+                {
+                    b.Navigation("Attributes");
+
+                    b.Navigation("Skills");
+
+                    b.Navigation("Talents");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Talent", b =>
+                {
+                    b.Navigation("TestEffects");
                 });
 #pragma warning restore 612, 618
         }

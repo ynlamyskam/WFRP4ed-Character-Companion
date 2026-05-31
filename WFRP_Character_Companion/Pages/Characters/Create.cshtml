@@ -1,0 +1,154 @@
+﻿@page
+@using WFRP_Character_Companion.Helpers
+@using WFRP_Character_Companion.Models
+@model WFRP_Character_Companion.Pages.Characters.CreateModel
+
+@{
+    ViewData["Title"] = "Nowa postać";
+}
+
+<h2 class="mb-4">Nowa postać</h2>
+
+<form method="post">
+
+    <!-- NAME -->
+    <div class="mb-3">
+        <label class="form-label">Imię</label>
+        <input asp-for="Input.Name" class="form-control" />
+    </div>
+
+    <hr />
+
+    <!-- ATTRIBUTES -->
+    <h4>Cechy</h4>
+
+    <table class="table table-bordered text-center">
+        <thead>
+            <tr>
+                <th>Cecha</th>
+                <th>Podstawowa</th>
+                <th>Rozwinięcia</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @for (int i = 0; i < Enum.GetValues<AttributeType>().Length; i++)
+            {
+                var attr = (AttributeType)i;
+
+                <tr>
+                    <td>@attr.GetDisplayName()</td>
+
+                    <td>
+                        <input class="form-control text-center"
+                               name="Input.Attributes[@i].Basic"
+                               type="number"
+                               value="0" />
+                    </td>
+
+                    <td>
+                        <input class="form-control text-center"
+                               name="Input.Attributes[@i].Advance"
+                               type="number"
+                               value="0" />
+                    </td>
+
+                    <input type="hidden"
+                           name="Input.Attributes[@i].Type"
+                           value="@attr" />
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr />
+
+    <!-- SKILLS -->
+    <h4>Umiejętności</h4>
+
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>Dodaj</th>
+                <th>Umiejętność</th>
+                <th>Rozwinięcia</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @for (int i = 0; i < Model.AllSkills.Count; i++)
+            {
+                var skill = Model.AllSkills[i];
+
+                <tr>
+                    <td class="text-center">
+                        <input type="checkbox"
+                               name="Input.Skills[@i].SkillId"
+                               value="@skill.Id" />
+                    </td>
+
+                    <td>
+                        @skill.Name
+                    </td>
+
+                    <td>
+                        <input class="form-control text-center"
+                               name="Input.Skills[@i].Advances"
+                               type="number"
+                               value="0" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr />
+
+    <!-- TALENTS -->
+    <h4>Talenty</h4>
+
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>Dodaj</th>
+                <th>Talent</th>
+                <th>Poziom</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @for (int i = 0; i < Model.AllTalents.Count; i++)
+            {
+                var talent = Model.AllTalents[i];
+
+                <tr>
+                    <td class="text-center">
+                        <input type="checkbox"
+                               name="Input.Talents[@i].TalentId"
+                               value="@talent.Id" />
+                    </td>
+
+                    <td>
+                        @talent.Name
+                    </td>
+
+                    <td>
+                        <input class="form-control text-center"
+                               name="Input.Talents[@i].Level"
+                               type="number"
+                               value="1"
+                               min="1" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr />
+
+    <!-- SUBMIT -->
+    <button type="submit" class="btn btn-primary">
+        Utwórz postać
+    </button>
+
+</form>

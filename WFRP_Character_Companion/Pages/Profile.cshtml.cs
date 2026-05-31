@@ -9,16 +9,10 @@ using WFRP_Character_Companion.Models;
 namespace WFRP_Character_Companion.Pages
 {
     [Authorize]
-    public class ProfileModel : PageModel
+    public class ProfileModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-
-        public ProfileModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
         [BindProperty]
         public ProfileInputModel Input { get; set; } = new ProfileInputModel();

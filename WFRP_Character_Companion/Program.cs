@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WFRP_Character_Companion.Data;
+using WFRP_Character_Companion.Data.Seed;
+using WFRP_Character_Companion.Data.Seed.Importers;
 using WFRP_Character_Companion.Models;
+using WFRP_Character_Companion.Services;
+using WFRP_Character_Companion.Services.ContentParsing;
 
 namespace WFRP_Character_Companion
 {
@@ -20,8 +24,24 @@ namespace WFRP_Character_Companion
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddRazorPages();
+            builder.Services.AddScoped<TalentImporter>();
+            builder.Services.AddScoped<TalentJsonParser>();
+            builder.Services.AddScoped<TalentRulesService>();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                db.Database.Migrate();
+
+                var importer = scope.ServiceProvider.GetRequiredService<TalentImporter>();
+
+                importer.Import("Data/Seed/Content/talents.json");
+
+                SkillSeed.SeedSkills(db);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

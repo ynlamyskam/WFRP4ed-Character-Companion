@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Aptekarz",
+    "maxLevelType": "AttributeBonus",
+    "maxLevelAttributes": [
+      "Intelligence"
+    ],
+    "tests": [
+      {
+        "skill": "Rzemiosło (Aptekarstwo)"
+      }
+    ],
+    "description": "Jesteś świetnym aptekarzem i lepiej od innych wyrabiasz pigułki, maści, smarowidła, olejki, kremy i im podobne. Możesz odwrócić kolejność kości nieudanego Testu Rzemiosła (Aptekarstwa), jeśli nowy wynik pozwoli ci odnieść sukces."
+  },
+  {
+    "name": "Arcydzieło",
+    "maxLevelType": "None",
+    "description": "Jesteś niekwestionowanym mistrzem w swojej dziedzinie, tworzącym dzieła tak złożone, że inni mogą je tylko podziwiać, zachwycając się twoim geniuszem. Za każdym razem, gdy wykupujesz ten Talent, tworzysz niezwykłe dzieło, wykorzystując Umiejętność Sztuka lub Rzemiosło. Nie ma ono sobie równych, będzie po wieki inspirowało, zadziwiało i budziło zachwyt swoją wyjątkowością. MG określa premie, które ci przysługują z tej racji. Zwykle wpływają one na Testy Ogłady w kontaktach z tymi, którzy podziwiają twoją sztukę. Sprzedaż dzieła powinna dać ci przynajmniej dziesięciokrotną wartość zwykłej ceny, a czasami nawet więcej."
+  },
+  {
+    "name": "Artylerzysta",
+    "maxLevelType": "AttributeBonus",
+    "maxLevelAttributes": [
+      "Dexterity"
+    ],
+    "description": "Z łatwością przeładowujesz broń prochową. Dodaj PS równe liczbie wykupień tego Talentu do każdego Wydłużonego Testu związanego z przeładowaniem broni prochowej."
+  },
+  {
+    "name": "Atak Wyprzedzający",
+    "maxLevelType": "AttributeBonus",
+    "maxLevelAttributes": [
+      "Initiative"
+    ],
+    "description": "Twoje błyskawiczne ciosy pozwalają na powalenie przeciwników, zanim oni sami zdążą zaatakować. Kiedy wróg na ciebie Szarżuje, wykonaj udany Wymagający (+0) Test Inicjatywy, by natychmiast wykonać Darmowy Atak poza normalną kolejnością Rundy. Używasz broni, którą trzymasz w wiodącej ręce. Możesz wykonać tyle Ataków Wyprzedzających w Rundzie, ile razy wykupiłeś ten Talent, ale tylko raz na każdego szarżującego."
+  },
+  {
+    "name": "Atrakcyjny",
+    "maxLevelType": "AttributeBonus",
+    "maxLevelAttributes": [
+      "Fellowship"
+    ],
+    "tests": [
+      {
+        "skill": "Charyzma",
+        "condition": "Wpływanie na tych, którym się podobasz"
+      }
+    ],
+    "description": "Może to przenikliwe spojrzenie lub zgrabna sylwetka, a może to, jak w uśmiechu odsłaniasz biel swoich zębów. Wiesz, jak najlepiej pokazać\nto, czym obdarzyli cię bogowie. Jeżeli uda ci się Test Charyzmy wobec osób, którym się podobasz, możesz obliczyć PS normalnie albo uzyskać ich tyle, ile wypadło na kostce jedności. Na przykład udany Test przy wyrzuceniu 38 oznaczałby wtedy 8 PS."
+  },
+  {
+    "name": "Bardzo Silny",
+    "maxLevelType": "Fixed",
+    "fixedMaxLevel": 1,
+    "description": "Twoja początkowa Siła zostaje na stałe podniesiona o +5, co nie liczy się do sumy twoich Rozwinięć."
+  },
+  {
+    "name": "Bardzo Szybki",
+    "maxLevelType": "Fixed",
+    "fixedMaxLevel": 1,
+    "description": "Twoja Szybkość zwiększa się o +1."
+  },
+  {
+    "name": "Berserkerska Szarża",
+    "maxLevelType": "AttributeBonus",
+    "maxLevelAttributes": [
+      "Toughness"
+    ],
+    "tests": [
+      {
+        "skill": "Broń Biała",
+        "condition": "Runda, w której Szarżowałeś"
+      }
+    ],
+    "description": "Nie licząc się z niebezpieczeństwem, rzucasz się na przeciwników, by pędem i siłą zadawać mocniejsze ciosy. Kiedy Szarżujesz, zadajesz +1 punkt obrażeń we wszystkich atakach Walki Wręcz za każde wykupienie tego Talentu."
+  }
+]
