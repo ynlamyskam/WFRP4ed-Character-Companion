@@ -1,0 +1,237 @@
+[
+  {
+    "name": "Atletyka",
+    "governingAttribute": "Agility"
+  },
+  {
+    "name": "Broń Biała",
+    "hasSpecialization": true,
+    "governingAttribute": "WeaponSkill"
+  },
+  {
+    "name": "Charyzma",
+    "governingAttribute": "Fellowship"
+  },
+  {
+    "name": "Dowodzenie",
+    "governingAttribute": "Fellowship"
+  },
+  {
+    "name": "Hazard",
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Intuicja",
+    "governingAttribute": "Initiative"
+  },
+  {
+    "name": "Jeździectwo",
+    "hasSpecialization": true,
+    "governingAttribute": "Agility"
+  },
+  {
+    "name": "Mocna Głowa",
+    "governingAttribute": "Toughness"
+  },
+  {
+    "name": "Nawigacja",
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Odporność",
+    "governingAttribute": "Toughness"
+  },
+  {
+    "name": "Opanowanie",
+    "governingAttribute": "Willpower"
+  },
+  {
+    "name": "Oswajanie",
+    "governingAttribute": "Willpower"
+  },
+  {
+    "name": "Percepcja",
+    "governingAttribute": "Initiative"
+  },
+  {
+    "name": "Plotkowanie",
+    "governingAttribute": "Fellowship"
+  },
+  {
+    "name": "Powożenie",
+    "governingAttribute": "Agility"
+  },
+  {
+    "name": "Przekupstwo",
+    "governingAttribute": "Fellowship"
+  },
+  {
+    "name": "Skradanie",
+    "hasSpecialization": true,
+    "governingAttribute": "Agility"
+  },
+  {
+    "name": "Sztuka",
+    "hasSpecialization": true,
+    "governingAttribute": "Dexterity"
+  },
+  {
+    "name": "Sztuka Przetrwania",
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Targowanie",
+    "governingAttribute": "Fellowship"
+  },
+  {
+    "name": "Unik",
+    "governingAttribute": "Agility"
+  },
+  {
+    "name": "Wioślarstwo",
+    "governingAttribute": "Strength"
+  },
+  {
+    "name": "Wspinaczka",
+    "governingAttribute": "Strength"
+  },
+  {
+    "name": "Występy",
+    "hasSpecialization": true,
+    "governingAttribute": "Fellowship"
+  },
+  {
+    "name": "Zastraszanie",
+    "governingAttribute": "Strength"
+  },
+  {
+    "name": "Badania Naukowe",
+    "isAdvanced": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Broń Zasięgowa",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "BallisticSkill"
+  },
+  {
+    "name": "Hipnoza",
+    "isAdvanced": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Język",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Kowalstwo runiczne",
+    "isAdvanced": true,
+    "governingAttribute": "Dexterity"
+  },
+  {
+    "name": "Kuglarstwo",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "Agility"
+  },
+  {
+    "name": "Leczenie",
+    "isAdvanced": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Modlitwa",
+    "isAdvanced": true,
+    "governingAttribute": "Fellowship"
+  },
+  {
+    "name": "Muzyka",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "Dexterity"
+  },
+  {
+    "name": "Opieka nad Zwierzętami",
+    "isAdvanced": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Otwieranie Zamków",
+    "isAdvanced": true,
+    "governingAttribute": "Dexterity"
+  },
+  {
+    "name": "Pływanie",
+    "isAdvanced": true,
+    "governingAttribute": "Strength"
+  },
+  {
+    "name": "Psychometria",
+    "isAdvanced": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Rzemiosło",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "Dexterity"
+  },
+  {
+    "name": "Sekretne Znaki",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Splatanie Magii",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "Willpower"
+  },
+  {
+    "name": "Tresura",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Tropienie",
+    "isAdvanced": true,
+    "governingAttribute": "Initiative"
+  },
+  {
+    "name": "Wiedza",
+    "isAdvanced": true,
+    "hasSpecialization": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Wróżbiarstwo",
+    "isAdvanced": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Wycena",
+    "isAdvanced": true,
+    "governingAttribute": "Intelligence"
+  },
+  {
+    "name": "Zastawianie Pułapek",
+    "isAdvanced": true,
+    "governingAttribute": "Dexterity"
+  },
+  {
+    "name": "Zwinne Palce",
+    "isAdvanced": true,
+    "governingAttribute": "Dexterity"
+  },
+  {
+    "name": "Żeglarstwo",
+    "isAdvanced": true,
+    "hasSpecialization":  true,
+    "governingAttribute": "Agility"
+  }
+]

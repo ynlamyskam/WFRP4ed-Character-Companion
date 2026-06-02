@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WFRP_Character_Companion.Data;
 
@@ -10,9 +11,11 @@ using WFRP_Character_Companion.Data;
 namespace WFRP_Character_Companion.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260531165514_CreateRace")]
+    partial class CreateRace
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -271,12 +274,6 @@ namespace WFRP_Character_Companion.Migrations
                     b.Property<int>("Experience")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Origin")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("OriginAccepted")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Race")
                         .HasColumnType("TEXT");
 
@@ -348,29 +345,6 @@ namespace WFRP_Character_Companion.Migrations
                     b.HasIndex("TalentId");
 
                     b.ToTable("CharacterTalents");
-                });
-
-            modelBuilder.Entity("WFRP_Character_Companion.Models.Origin", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PackageJson")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Race")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Origins");
                 });
 
             modelBuilder.Entity("WFRP_Character_Companion.Models.Skill", b =>

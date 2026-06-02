@@ -11,7 +11,7 @@ namespace WFRP_Character_Companion.Models.Import
         public string Description { get; set; }
 
         [JsonPropertyName("maxLevelType")]
-        public TalentMaxLevelType MaxLevelType { get; set; }
+        public TalentMaxLevelType MaxLevelType { get; set; } = TalentMaxLevelType.AttributeBonus;
 
         [JsonPropertyName("fixedMaxLevel")]
         public int? FixedMaxLevel { get; set; }
