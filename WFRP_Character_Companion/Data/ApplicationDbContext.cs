@@ -13,6 +13,9 @@ namespace WFRP_Character_Companion.Data
         public DbSet<CharacterTalent> CharacterTalents { get; set; }
         public DbSet<TalentTestEffect> TalentTestEffects { get; set; }
 
+        public DbSet<CharacterDraft> CharacterDrafts { get; set; }
+        public DbSet<Origin> Origins { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

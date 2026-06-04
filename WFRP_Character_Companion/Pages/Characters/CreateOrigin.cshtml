@@ -1,0 +1,28 @@
+﻿@page
+@model WFRP_Character_Companion.Pages.Characters.CreateOriginModel
+@{
+    <h2>Tworzenie postaci — Pochodzenie</h2>
+
+    <div class="card p-3">
+        <h4>Wylosowane pochodzenie:</h4>
+        <div class="alert alert-info"><strong>@Model.RolledOrigin.Name</strong> (@Model.RolledOrigin.Race)</div>
+
+        <form method="post" asp-page-handler="Accept">
+            <input type="hidden" name="originName" value="@Model.RolledOrigin.Name" />
+            <button class="btn btn-success">Akceptuję (+10 XP)</button>
+        </form>
+
+        <hr />
+
+        <h5>Albo wybierz ręcznie:</h5>
+        <form method="post" asp-page-handler="Choose">
+            <select name="originName" class="form-select">
+                @foreach (var o in Model.AllOrigins.Where(x => string.IsNullOrEmpty(Model.Draft.Race) || x.Race == Model.Draft.Race))
+                {
+                    <option value="@o.Name">@o.Name (@o.Race)</option>
+                }
+            </select>
+            <button class="btn btn-primary mt-2">Dalej (bez bonusu XP)</button>
+        </form>
+    </div>
+}

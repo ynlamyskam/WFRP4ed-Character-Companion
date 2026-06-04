@@ -262,6 +262,43 @@ namespace WFRP_Character_Companion.Migrations
                     b.ToTable("CharacterAttribute");
                 });
 
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterDraft", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Experience")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Origin")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("OriginAccepted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Race")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("RaceAccepted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StateJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Step")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CharacterDrafts");
+                });
+
             modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterSkill", b =>
                 {
                     b.Property<int>("Id")
@@ -311,6 +348,29 @@ namespace WFRP_Character_Companion.Migrations
                     b.HasIndex("TalentId");
 
                     b.ToTable("CharacterTalents");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Origin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PackageJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Race")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Origins");
                 });
 
             modelBuilder.Entity("WFRP_Character_Companion.Models.Skill", b =>
