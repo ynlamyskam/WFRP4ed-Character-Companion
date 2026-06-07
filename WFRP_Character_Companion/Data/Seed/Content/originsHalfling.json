@@ -1,0 +1,112 @@
+[
+  {
+    "race": "Niziołek",
+    "name": "Ashfield",
+    "package": {
+      "skills": [
+        {
+          "skill": {
+            "name": "Mocna Głowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Charyzma"
+          }
+        },
+        {
+          "skill": {
+            "name": "Percepcja"
+          }
+        },
+        {
+          "skill": {
+            "name": "Rzemiosło",
+            "specialization": "Gotowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Skradanie",
+            "specialization": "Dowolne"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Reikland"
+          }
+        },
+        {
+          "skill": {
+            "name": "Zwinne Palce"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Reikland"
+          }
+        },
+        {
+          "skill": {
+            "name": "Język",
+            "specialization": "Krainy Zgromadzenia"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Zasięgowa",
+            "specialization": "Dowolna"
+          }
+        },
+        {
+          "skill": {
+            "name": "Opanowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Intuicja"
+          }
+        }
+      ],
+      "talents": [
+        {
+          "talent": {
+            "name": "Mały"
+          }
+        },
+        {
+          "talent": {
+            "name": "Odporny na (Chaos)"
+          }
+        },
+        {
+          "type": "Random",
+          "count": 1
+        },
+        {
+          "type": "Choice",
+          "options": [
+            {
+              "name": "Etykieta",
+              "specialization":  "Żołnierze"
+            },
+            { "name": "Wyczulony Zmysł (Wzrok)" }
+          ]
+        },
+        {
+          "talent": {
+            "name": "Wyczulony Zmysł (Smak)"
+          }
+        },
+        {
+          "talent": {
+            "name": "Widzenie w Ciemności"
+          }
+        }
+      ]
+    }
+  }
+]
