@@ -5,10 +5,10 @@ namespace WFRP_Character_Companion.Models.Import
     public class TalentImportDto
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [JsonPropertyName("description")]
-        public string Description { get; set; }
+        public required string Description { get; set; }
 
         [JsonPropertyName("maxLevelType")]
         public TalentMaxLevelType MaxLevelType { get; set; } = TalentMaxLevelType.AttributeBonus;
@@ -20,12 +20,12 @@ namespace WFRP_Character_Companion.Models.Import
         public List<AttributeType>? MaxLevelAttributes { get; set; }
 
         [JsonPropertyName("tests")]
-        public List<TalentTestEffectDto> Tests { get; set; }
+        public List<TalentTestEffectDto>? Tests { get; set; }
     }
 
     public class TalentTestEffectDto
     {
-        public string Skill { get; set; }
+        public string? Skill { get; set; }
 
         public string? Condition { get; set; }
 

@@ -133,6 +133,7 @@ namespace WFRP_Character_Companion
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 db.Database.Migrate();
+                CampaignMigrationFix.ApplyIfNeeded(db);
 
                 var talentImporter = scope.ServiceProvider.GetRequiredService<IContentImporter<Talent>>();
                 talentImporter.Import("Data/Seed/Content/talents.json");
@@ -191,6 +192,7 @@ namespace WFRP_Character_Companion
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
