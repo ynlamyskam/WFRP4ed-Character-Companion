@@ -1,15 +1,21 @@
 @page
 @model WFRP_Character_Companion.Pages.Characters.CreateDetailsModel
+@{
+    ViewData["Title"] = "Finalizacja";
+}
 
-<h2>Tworzenie postaci — Inne szczegóły</h2>
+@await Html.PartialAsync("_CreationProgress", 11)
+<partial name="_ErrorAlert" />
 
-<div class="card p-3">
+<h1 class="font-display mb-6 text-2xl font-bold text-amber-500 sm:text-3xl">Ostatnie szczegóły</h1>
+
+<div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
     <form method="post">
-        <div class="mb-3">
-            <label class="form-label">Opis / Backstory</label>
-            <textarea name="Description" class="form-control" rows="6">@Model.Description</textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Utwórz postać</button>
+        <label class="mb-1 block text-sm text-stone-400">Opis / backstory</label>
+        <textarea name="Description" rows="6"
+                  class="mb-4 w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600">@Model.Description</textarea>
+        <button type="submit" class="rounded-lg bg-emerald-800 px-8 py-3 text-lg font-medium text-white transition hover:bg-emerald-700">
+            Utwórz postać
+        </button>
     </form>
 </div>

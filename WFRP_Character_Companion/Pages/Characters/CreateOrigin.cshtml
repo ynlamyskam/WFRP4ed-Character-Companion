@@ -1,36 +1,48 @@
 ﻿@page
 @model WFRP_Character_Companion.Pages.Characters.CreateOriginModel
 @{
-    <h2>Tworzenie postaci — Pochodzenie</h2>
+    ViewData["Title"] = "Pochodzenie";
+}
 
-    <div class="card p-3">
-        <h4>Wylosowane pochodzenie:</h4>
-        <p class="text-muted">Wybrana rasa: @Model.Draft.Race</p>
+@await Html.PartialAsync("_CreationProgress", 2)
+<partial name="_ErrorAlert" />
+
+<h1 class="font-display mb-2 text-2xl font-bold text-amber-500 sm:text-3xl">Pochodzenie</h1>
+<p class="mb-6 text-stone-400">Wybrana rasa: <span class="text-stone-200">@Model.Draft.Race</span></p>
+
+<div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
     @if (Model.RolledOrigin != null)
     {
-        <div class="alert alert-info"><strong>@Model.RolledOrigin.Name</strong> (@Model.RolledOrigin.Race)</div>
+        <div class="mb-6 rounded-lg border border-amber-800/40 bg-amber-950/30 px-4 py-4">
+            <p class="font-display text-xl font-bold text-amber-300">@Model.RolledOrigin.Name</p>
+            <p class="text-sm text-stone-400">@Model.RolledOrigin.Race</p>
+        </div>
+        <form method="post" asp-page-handler="Accept" class="mb-6">
+            <input type="hidden" name="originName" value="@Model.RolledOrigin.Name" />
+            <button type="submit" class="rounded-lg bg-emerald-800 px-4 py-3 font-medium text-white transition hover:bg-emerald-700">
+                Akceptuję (+10 PD)
+            </button>
+        </form>
     }
     else
     {
-        <div class="alert alert-warning">Brak pasującego pochodzenia dla wybranej rasy.</div>
+        <div class="mb-6 rounded-lg border border-yellow-800/40 bg-yellow-950/30 px-4 py-3 text-yellow-200">
+            Brak pasującego pochodzenia dla wybranej rasy.
+        </div>
     }
 
-        <form method="post" asp-page-handler="Accept">
-            <input type="hidden" name="originName" value="@Model.RolledOrigin?.Name" />
-            <button class="btn btn-success" @(Model.RolledOrigin == null ? "disabled" : null)>Akceptuję (+10 XP)</button>
-        </form>
-
-        <hr />
-
-        <h5>Albo wybierz ręcznie:</h5>
-        <form method="post" asp-page-handler="Choose">
-            <select name="originName" class="form-select">
-            @foreach (var o in Model.FilteredOrigins)
-            {
-                <option value="@o.Name">@o.Name (@o.Race)</option>
-            }
-        </select>
-            <button class="btn btn-primary mt-2">Dalej (bez bonusu XP)</button>
+    <div class="border-t border-stone-700 pt-6">
+        <h3 class="mb-3 text-sm font-medium text-stone-400">Albo wybierz ręcznie</h3>
+        <form method="post" asp-page-handler="Choose" class="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <select name="originName" class="flex-1 rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600">
+                @foreach (var o in Model.FilteredOrigins)
+                {
+                    <option value="@o.Name">@o.Name (@o.Race)</option>
+                }
+            </select>
+            <button type="submit" class="rounded-lg bg-amber-800 px-4 py-2 font-medium text-white transition hover:bg-amber-700">
+                Dalej (bez bonusu PD)
+            </button>
         </form>
     </div>
-}
+</div>

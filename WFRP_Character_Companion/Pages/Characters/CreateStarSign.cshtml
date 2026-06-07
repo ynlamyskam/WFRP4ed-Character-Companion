@@ -1,17 +1,24 @@
 @page
 @model WFRP_Character_Companion.Pages.Characters.CreateStarSignModel
+@{
+    ViewData["Title"] = "Znak gwiezdny";
+}
 
-<h2>Tworzenie postaci — Znak gwiezdny</h2>
+@await Html.PartialAsync("_CreationProgress", 6)
+<partial name="_ErrorAlert" />
 
-<div class="card p-3">
-    <h4>Wylosowany znak:</h4>
-    <div class="alert alert-info">
-        <strong>@Model.Rolled?.Name</strong>
-        <div>@Model.Rolled?.Description</div>
+<h1 class="font-display mb-6 text-2xl font-bold text-amber-500 sm:text-3xl">Znak gwiezdny</h1>
+
+<div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+    <div class="mb-6 rounded-lg border border-amber-800/40 bg-amber-950/30 px-4 py-4">
+        <p class="font-display text-xl font-bold text-amber-300">@Model.Rolled?.Name</p>
+        @if (!string.IsNullOrEmpty(Model.Rolled?.Description))
+        {
+            <p class="mt-2 text-sm text-stone-400">@Model.Rolled.Description</p>
+        }
     </div>
-
     <form method="post">
         <input type="hidden" name="chosenSign" value="@Model.Rolled?.Name" />
-        <button class="btn btn-primary">Akceptuj</button>
+        <button type="submit" class="rounded-lg bg-amber-800 px-6 py-3 font-medium text-white transition hover:bg-amber-700">Akceptuj</button>
     </form>
 </div>

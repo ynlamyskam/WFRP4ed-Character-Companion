@@ -4,51 +4,60 @@
     ViewData["Title"] = "Nowa kampania";
 }
 
-<h2 class="mb-4">Stwórz kampanię</h2>
+<a asp-page="/Campaigns/CampaignHub" class="mb-6 inline-block text-sm text-stone-500 transition hover:text-amber-400">&larr; Wróć do kampanii</a>
 
-<form method="post">
-    <div class="mb-3">
-        <label asp-for="Input.Name" class="form-label">Nazwa kampanii</label>
-        <input asp-for="Input.Name" class="form-control" />
-        <span asp-validation-for="Input.Name" class="text-danger"></span>
-    </div>
+<h1 class="font-display mb-6 text-2xl font-bold text-amber-500 sm:text-3xl">Stwórz kampanię</h1>
 
-    <div class="mb-3">
-        <label class="form-label">Postacie w kampanii</label>
-        @if (Model.UserCharacters.Count == 0)
-        {
-            <p class="text-muted">Nie masz jeszcze postaci do dodania.</p>
-        }
-        else
-        {
-            <div class="border rounded p-3">
-                @foreach (var character in Model.UserCharacters)
-                {
-                    <div class="form-check">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               name="Input.CharacterIds"
-                               value="@character.Id"
-                               id="char_@character.Id" />
-                        <label class="form-check-label" for="char_@character.Id">
-                            @character.Name
+<div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+    <partial name="_ValidationSummary" />
+
+    <form method="post" class="space-y-6">
+        <div>
+            <label asp-for="Input.Name" class="mb-1 block text-sm text-stone-400">Nazwa kampanii</label>
+            <input asp-for="Input.Name" required
+                   class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
+            <span asp-validation-for="Input.Name" class="mt-1 block text-sm text-red-400"></span>
+        </div>
+
+        <div>
+            <label class="mb-2 block text-sm text-stone-400">Twoje postacie w kampanii</label>
+            @if (Model.UserCharacters.Count == 0)
+            {
+                <p class="text-sm text-stone-500">Nie masz jeszcze postaci — możesz dodać je później.</p>
+            }
+            else
+            {
+                <div class="space-y-2 rounded-lg border border-stone-700 bg-stone-800/40 p-4">
+                    @foreach (var character in Model.UserCharacters)
+                    {
+                        <label class="flex cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 transition hover:bg-stone-800">
+                            <input type="checkbox" name="Input.CharacterIds" value="@character.Id"
+                                   class="h-4 w-4 rounded border-stone-600 bg-stone-900 text-amber-600 focus:ring-amber-600" />
+                            <span class="text-stone-200">@character.Name</span>
                         </label>
-                    </div>
-                }
-            </div>
-        }
-    </div>
+                    }
+                </div>
+            }
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="Input.MemberEmail" class="form-label">Zaproś użytkownika (e-mail)</label>
-        <input asp-for="Input.MemberEmail" class="form-control" type="email" placeholder="opcjonalnie" />
-        <span asp-validation-for="Input.MemberEmail" class="text-danger"></span>
-        <div class="form-text">Zaproszony gracz zobaczy kampanię na swojej liście i doda własne postacie.</div>
-    </div>
+        <div>
+            <label asp-for="Input.MemberEmail" class="mb-1 block text-sm text-stone-400">Zaproś gracza (e-mail)</label>
+            <input asp-for="Input.MemberEmail" type="email" placeholder="opcjonalnie"
+                   class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 placeholder-stone-500 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
+            <span asp-validation-for="Input.MemberEmail" class="mt-1 block text-sm text-red-400"></span>
+            <p class="mt-1 text-xs text-stone-500">Zaproszony gracz zobaczy kampanię na liście i doda własne postacie.</p>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Utwórz kampanię</button>
-    <a class="btn btn-outline-secondary" asp-page="/Campaigns/CampaignHub">Anuluj</a>
-</form>
+        <div class="flex flex-wrap gap-3">
+            <button type="submit" class="rounded-lg bg-emerald-800 px-5 py-2.5 font-medium text-white transition hover:bg-emerald-700">
+                Utwórz kampanię
+            </button>
+            <a asp-page="/Campaigns/CampaignHub" class="rounded-lg border border-stone-600 px-5 py-2.5 text-stone-300 transition hover:bg-stone-800">
+                Anuluj
+            </a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

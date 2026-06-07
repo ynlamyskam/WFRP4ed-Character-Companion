@@ -1,0 +1,24 @@
+@model int
+@{
+    var steps = new[] { "Rasa", "Pochodzenie", "Dane", "Profesja", "Cechy", "Znak", "PP/PB", "Um. ras.", "Prof.", "Ekwip.", "Koniec" };
+    var current = Model;
+}
+<nav aria-label="Postęp tworzenia postaci" class="mb-8 overflow-x-auto">
+    <ol class="flex min-w-max gap-1 sm:gap-2">
+        @for (var i = 0; i < steps.Length; i++)
+        {
+            var n = i + 1;
+            var done = n < current;
+            var active = n == current;
+            var css = done
+                ? "border-amber-700/50 bg-amber-950/40 text-amber-300"
+                : active
+                    ? "border-amber-500 bg-amber-900/30 text-amber-200 ring-1 ring-amber-500/50"
+                    : "border-stone-700 bg-stone-900/50 text-stone-500";
+            <li class="@css flex flex-col items-center rounded-lg border px-2 py-2 text-center sm:min-w-[4.5rem] sm:px-3">
+                <span class="text-xs font-bold tabular-nums">@n</span>
+                <span class="hidden text-[10px] leading-tight sm:block">@steps[i]</span>
+            </li>
+        }
+    </ol>
+</nav>

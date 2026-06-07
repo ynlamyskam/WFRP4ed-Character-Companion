@@ -1,74 +1,94 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pl" class="h-full">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WFRP_Character_Companion</title>
-    
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WFRP_Character_Companion.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - WFRP Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Segoe UI', 'system-ui', 'sans-serif'],
+                        display: ['Georgia', 'Cambria', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
 </head>
-<body>
-    <div class="d-flex">
+@{
+    var wide = ViewData["WideLayout"] as bool? == true;
+    var contentClass = wide ? "mx-auto max-w-6xl" : "mx-auto max-w-4xl";
+}
+<body class="min-h-full bg-stone-950 text-stone-100 antialiased">
 
-        <!-- SIDEBAR -->
-        <aside class="bg-white border-end vh-100 p-3 d-flex flex-column"
-               style="width: 260px;">
+    <div id="sidebar-overlay" class="fixed inset-0 z-40 hidden bg-black/60 lg:hidden" onclick="toggleSidebar()"></div>
 
-            <div class="mb-4">
-                <a class="text-decoration-none text-dark fw-bold" asp-page="/Index">
+    <div class="flex min-h-screen">
+
+        <aside id="sidebar-panel"
+               class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-stone-800 bg-stone-900 transition-transform duration-200 lg:static lg:translate-x-0">
+
+            <div class="border-b border-stone-800 px-5 py-5">
+                <a asp-page="/Index" class="font-display text-lg font-bold tracking-wide text-amber-500 hover:text-amber-400">
                     WFRP Companion
                 </a>
+                <p class="mt-1 text-xs text-stone-500">Character Companion</p>
             </div>
 
-            <ul class="nav flex-column gap-2">
+            <nav class="flex-1 space-y-1 px-3 py-4">
+                <a asp-page="/Index"
+                   class="block rounded-lg px-3 py-2 text-sm text-stone-300 transition hover:bg-stone-800 hover:text-white">
+                    Strona główna
+                </a>
+                <a asp-page="/Characters/CharacterHub"
+                   class="block rounded-lg px-3 py-2 text-sm text-stone-300 transition hover:bg-stone-800 hover:text-white">
+                    Postacie
+                </a>
+                <a asp-page="/Campaigns/CampaignHub"
+                   class="block rounded-lg px-3 py-2 text-sm text-stone-300 transition hover:bg-stone-800 hover:text-white">
+                    Kampanie
+                </a>
+            </nav>
 
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-page="/Index">
-                        Strona Główna
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-page="/Characters/CharacterHub">
-                        Lista Postaci
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-page="/Campaigns/CampaignHub">
-                        Lista Kampanii
-                    </a>
-                </li>
-
-            </ul>
-
-            <div class="mt-auto pt-3 border-top">
-
+            <div class="border-t border-stone-800 px-3 py-4">
                 <partial name="_LoginPartial" />
-
             </div>
-
         </aside>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-grow-1 p-4">
+        <div class="flex flex-1 flex-col min-w-0">
+            <header class="sticky top-0 z-30 flex items-center gap-3 border-b border-stone-800 bg-stone-950/90 px-4 py-3 backdrop-blur lg:hidden">
+                <button type="button" onclick="toggleSidebar()" class="rounded-lg p-2 text-stone-400 hover:bg-stone-800 hover:text-white" aria-label="Menu">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <span class="font-display text-sm font-semibold text-amber-500">WFRP Companion</span>
+            </header>
 
-            @RenderBody()
+            <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                <div class="@contentClass">
+                    @RenderBody()
+                </div>
+            </main>
 
-        </main>
-
+            <footer class="border-t border-stone-800 px-4 py-4 text-center text-xs text-stone-600">
+                &copy; 2026 WFRP Character Companion
+            </footer>
+        </div>
     </div>
 
-    <footer class="text-muted border-top p-2 text-center">
-        &copy; 2026 - WFRP Character Companion
-    </footer>
-
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar-overlay').classList.toggle('open');
+            document.getElementById('sidebar-panel').classList.toggle('open');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        }
+    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <script src="~/js/tabs.js" asp-append-version="true"></script>
+    <script src="~/js/creation-validation.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

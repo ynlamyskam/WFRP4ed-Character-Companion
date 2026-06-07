@@ -1,0 +1,21 @@
+html {
+    scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #57534e;
+    border-radius: 4px;
+}
+
+#sidebar-overlay.open {
+    display: block;
+}
+
+#sidebar-panel.open {
+    transform: translateX(0);
+}

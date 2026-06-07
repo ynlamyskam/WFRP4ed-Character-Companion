@@ -1,48 +1,43 @@
 ﻿@page
-@using WFRP_Character_Companion.Models
 @model WFRP_Character_Companion.Pages.Characters.CreateRaceModel
+@{
+    ViewData["Title"] = "Rasa";
+}
 
-<h2>Tworzenie postaci — Rasa</h2>
+@await Html.PartialAsync("_CreationProgress", 1)
+<partial name="_ErrorAlert" />
 
-<div class="card p-3">
+<h1 class="font-display mb-2 text-2xl font-bold text-amber-500 sm:text-3xl">Tworzenie postaci</h1>
+<p class="mb-6 text-stone-400">Krok 1 — wybór rasy</p>
 
-    <h4>Wylosowana rasa:</h4>
+<div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
 
-    <div class="alert alert-info">
-        <strong>@Model.RolledRace</strong>
+    <h2 class="mb-3 text-lg font-semibold text-stone-200">Wylosowana rasa</h2>
+    <div class="mb-6 rounded-lg border border-amber-800/40 bg-amber-950/30 px-4 py-4 text-center">
+        <span class="font-display text-2xl font-bold text-amber-300">@Model.RolledRace</span>
     </div>
 
-    <form method="post" asp-page-handler="Accept">
+    <form method="post" asp-page-handler="Accept" class="mb-6">
         <input type="hidden" name="race" value="@Model.RolledRace" />
-        <button class="btn btn-success">
-            Akceptuję (+20 XP)
+        <button type="submit" class="w-full rounded-lg bg-emerald-800 px-4 py-3 font-medium text-white transition hover:bg-emerald-700 sm:w-auto">
+            Akceptuję (+20 PD)
         </button>
     </form>
 
-    <hr />
-
-    <h5>Albo wybierz ręcznie:</h5>
-
-    <form method="post" asp-page-handler="Choose">
-
-        <select name="race" class="form-select">
-            @if (Model.Races.Any())
-            {
-                @foreach (var r in Model.Races)
-                {
-                    <option value="@r">@r</option>
-                }
-            }
-            else
-            {
-                <option>Brak ras w Content/races.json</option>
-            }
-        </select>
-
-        <button class="btn btn-primary mt-2">
-            Dalej (bez bonusu XP)
-        </button>
-
-    </form>
-
+    <div class="border-t border-stone-700 pt-6">
+        <h3 class="mb-3 text-sm font-medium text-stone-400">Albo wybierz ręcznie</h3>
+        <form method="post" asp-page-handler="Choose" class="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div class="flex-1">
+                <select name="race" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600">
+                    @foreach (var r in Model.Races)
+                    {
+                        <option value="@r">@r</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="rounded-lg bg-amber-800 px-4 py-2 font-medium text-white transition hover:bg-amber-700">
+                Dalej (bez bonusu PD)
+            </button>
+        </form>
+    </div>
 </div>

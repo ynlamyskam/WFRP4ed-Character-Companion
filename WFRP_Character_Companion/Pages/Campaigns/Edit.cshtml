@@ -1,146 +1,76 @@
 @page "{id:int}"
-
 @model WFRP_Character_Companion.Pages.Campaigns.EditModel
-
 @{
-
     ViewData["Title"] = "Edycja kampanii";
-
 }
 
+<a asp-page="/Campaigns/CampaignHub" class="mb-6 inline-block text-sm text-stone-500 transition hover:text-amber-400">&larr; Wróć do kampanii</a>
 
+<h1 class="font-display mb-1 text-2xl font-bold text-amber-500 sm:text-3xl">@Model.CampaignName</h1>
+<p class="mb-8 text-stone-400">Zarządzanie kampanią (tylko twórca / MG)</p>
 
-<h2 class="mb-1">@Model.CampaignName</h2>
+<partial name="_ValidationSummary" />
 
-<p class="text-muted mb-4">Zarządzanie kampanią (tylko twórca / MG)</p>
-
-
-
-<div class="row g-4">
-
-    <div class="col-lg-6">
-
-        <h4>Uczestnicy i postacie</h4>
-
+<div class="grid gap-6 lg:grid-cols-2">
+    <section class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-lg">
+        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-stone-500">Uczestnicy i postacie</h2>
         @if (Model.CampaignView.Members.Count == 0)
-
         {
-
-            <p class="text-muted">Brak uczestników.</p>
-
+            <p class="text-sm text-stone-500">Brak uczestników.</p>
         }
-
         else
-
         {
-
-            <ul>
-
+            <div class="space-y-3">
                 @foreach (var member in Model.CampaignView.Members)
-
                 {
-
-                    <li class="mb-2">
-
-                        <span class="fw-medium">@member.DisplayName</span>
-
+                    <div class="rounded-lg border border-stone-800 bg-stone-800/30 px-4 py-3">
+                        <p class="font-medium text-stone-200">@member.DisplayName</p>
                         @if (member.Characters.Count == 0)
-
                         {
-
-                            <span class="text-muted">— brak postaci</span>
-
+                            <p class="mt-1 text-sm text-stone-500">Brak postaci</p>
                         }
-
                         else
-
                         {
-
-                            <ul>
-
+                            <ul class="mt-2 flex flex-wrap gap-2">
                                 @foreach (var character in member.Characters)
-
                                 {
-
                                     <li>
-
-                                        <a asp-page="/Characters/Details" asp-route-id="@character.CharacterId">
-
-                                            @character.Name
-
-                                        </a>
-
+                                        <a asp-page="/Characters/Details" asp-route-id="@character.CharacterId"
+                                           class="text-sm text-amber-400 hover:text-amber-300">@character.Name</a>
                                     </li>
-
                                 }
-
                             </ul>
-
                         }
-
-                    </li>
-
+                    </div>
                 }
-
-            </ul>
-
-        }
-
-    </div>
-
-
-
-    <div class="col-lg-6">
-
-        <h4>Dodaj użytkownika</h4>
-
-        <form method="post" asp-page-handler="AddMember" asp-route-id="@Model.CampaignId">
-
-            <div class="mb-2">
-
-                <input asp-for="AddMemberEmail" class="form-control" type="email" placeholder="Adres e-mail" />
-
-                <span asp-validation-for="AddMemberEmail" class="text-danger"></span>
-
             </div>
+        }
+    </section>
 
-            <button type="submit" class="btn btn-outline-primary">Zaproś użytkownika</button>
+    <section class="space-y-6">
+        <div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-lg">
+            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-stone-500">Dodaj użytkownika</h2>
+            <form method="post" asp-page-handler="AddMember" asp-route-id="@Model.CampaignId" class="space-y-3">
+                <input asp-for="AddMemberEmail" type="email" placeholder="Adres e-mail"
+                       class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 placeholder-stone-500 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
+                <span asp-validation-for="AddMemberEmail" class="block text-sm text-red-400"></span>
+                <button type="submit" class="rounded-lg bg-amber-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700">
+                    Zaproś użytkownika
+                </button>
+            </form>
+        </div>
 
-        </form>
-
-
-
-        <hr class="my-4" />
-
-
-
-        <h4>Twoje postacie</h4>
-
-        <p class="text-muted">Dodaj lub usuń własne postacie w kampanii.</p>
-
-        <a class="btn btn-primary" asp-page="/Campaigns/AddCharacter" asp-route-id="@Model.CampaignId">
-
-            Postacie
-
-        </a>
-
-    </div>
-
+        <div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-lg">
+            <h2 class="mb-2 text-sm font-semibold uppercase tracking-wide text-stone-500">Twoje postacie</h2>
+            <p class="mb-4 text-sm text-stone-400">Dodaj lub usuń własne postacie w kampanii.</p>
+            <a asp-page="/Campaigns/AddCharacter" asp-route-id="@Model.CampaignId"
+               class="inline-block rounded-lg bg-emerald-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700">
+                Zarządzaj postaciami
+            </a>
+        </div>
+    </section>
 </div>
 
-
-
-<hr class="my-4" />
-
-
-
-<a class="btn btn-outline-secondary" asp-page="/Campaigns/CampaignHub">Wróć do listy kampanii</a>
-
-
-
 @section Scripts {
-
     <partial name="_ValidationScriptsPartial" />
-
 }
-

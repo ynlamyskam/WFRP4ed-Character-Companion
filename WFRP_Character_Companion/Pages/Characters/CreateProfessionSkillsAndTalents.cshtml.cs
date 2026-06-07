@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WFRP_Character_Companion.Data;
+using WFRP_Character_Companion.Helpers;
 using WFRP_Character_Companion.Models;
 using WFRP_Character_Companion.Services.CharacterCreation;
-using System.Text.Json;
 
 namespace WFRP_Character_Companion.Pages.Characters
 {
@@ -33,8 +33,6 @@ namespace WFRP_Character_Companion.Pages.Characters
             var draft = await _draftService.GetOrCreateActiveDraftAsync(user.Id);
             await LoadProfessionTierData(draft);
 
-            var state = DraftStateHelper.Parse(draft.StateJson);
-
             var pts = new Dictionary<string, int>();
             for (int i = 0; i < TierSkills.Count; i++)
             {
@@ -45,9 +43,15 @@ namespace WFRP_Character_Companion.Pages.Characters
                     pts[TierSkills[i]] = 0;
             }
 
-            if (pts.Values.Sum() != 40)
-                return BadRequest("Musisz rozdzielić dokładnie 40 punktów.");
+            var total = pts.Values.Sum();
+            if (TierSkills.Count > 0 && total != 40)
+                return this.PageWithError($"Rozdzielono {total} punktów — wymagane dokładnie 40.");
 
+            var chosen = Request.Form.ContainsKey("chosenTalent") ? Request.Form["chosenTalent"].ToString() ?? string.Empty : string.Empty;
+            if (TierTalents.Count > 0 && string.IsNullOrEmpty(chosen))
+                return this.PageWithError("Wybierz talent z Tier 1 profesji.");
+
+            var state = DraftStateHelper.Parse(draft.StateJson);
             foreach (var kv in pts)
             {
                 var existingKey = $"Advance_{kv.Key}";
@@ -55,7 +59,6 @@ namespace WFRP_Character_Companion.Pages.Characters
                 DraftStateHelper.SetValue(state, existingKey, existing + kv.Value);
             }
 
-            var chosen = Request.Form.ContainsKey("chosenTalent") ? Request.Form["chosenTalent"].ToString() ?? string.Empty : string.Empty;
             if (!string.IsNullOrEmpty(chosen))
                 DraftStateHelper.SetValue(state, "ProfessionTier1Talent", chosen);
 
@@ -70,8 +73,10 @@ namespace WFRP_Character_Companion.Pages.Characters
         {
             var professionName = GetProfessionFromDraft(draft);
             FoundProfessionName = professionName ?? string.Empty;
-            if (string.IsNullOrEmpty(professionName))
-                return;
+            TierSkills = [];
+            TierTalents = [];
+
+            if (string.IsNullOrEmpty(professionName)) return;
 
             var professions = await _content.LoadProfessionsAsync();
             var prof = _content.FindProfession(professions, professionName);

@@ -7,39 +7,25 @@
     var appUser = await UserManager.GetUserAsync(User);
 }
 
-<ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-            <div class="d-flex align-items-center gap-2">
-
-                @if (appUser?.AvatarFileName != null)
-                {
-                    <img src="/avatars/@appUser.AvatarFileName"
-                         style="width:32px;height:32px;border-radius:50%;object-fit:cover;" />
-                }
-
-                @* <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a> *@
-                <a class="nav-link" asp-page="/Profile">
-                    @(string.IsNullOrWhiteSpace(appUser?.DisplayName)
-                        ? "Profil"
-                        : appUser.DisplayName)
-                </a>
-            </div>
-    </li>
-    <li class="nav-item">
-        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Wyloguj się</button>
-        </form>
-    </li>
+    <div class="flex items-center gap-3">
+        @if (appUser?.AvatarFileName != null)
+        {
+            <img src="/avatars/@appUser.AvatarFileName" alt="" class="h-8 w-8 rounded-full object-cover ring-1 ring-stone-700" />
+        }
+        <a asp-page="/Profile" class="truncate text-sm text-stone-300 hover:text-amber-400">
+            @(string.IsNullOrWhiteSpace(appUser?.DisplayName) ? "Profil" : appUser.DisplayName)
+        </a>
+    </div>
+    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index")" class="mt-2">
+        <button type="submit" class="w-full rounded-lg px-3 py-2 text-left text-sm text-stone-400 transition hover:bg-stone-800 hover:text-red-300">
+            Wyloguj się
+        </button>
+    </form>
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Rejestracja</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Logowanie</a>
-    </li>
+    <a asp-area="Identity" asp-page="/Account/Login" class="block rounded-lg px-3 py-2 text-sm text-stone-300 hover:bg-stone-800">Logowanie</a>
+    <a asp-area="Identity" asp-page="/Account/Register" class="mt-1 block rounded-lg px-3 py-2 text-sm text-stone-400 hover:bg-stone-800">Rejestracja</a>
 }
-</ul>

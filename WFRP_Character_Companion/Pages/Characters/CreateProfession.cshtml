@@ -1,64 +1,74 @@
 @page
 @using WFRP_Character_Companion.Services.CharacterCreation
 @model WFRP_Character_Companion.Pages.Characters.CreateProfessionModel
+@{
+    ViewData["Title"] = "Profesja";
+}
 
-<h2>Tworzenie postaci — Profesja</h2>
+@await Html.PartialAsync("_CreationProgress", 4)
+<partial name="_ErrorAlert" />
 
-<div class="card p-3">
+<h1 class="font-display mb-6 text-2xl font-bold text-amber-500 sm:text-3xl">Profesja</h1>
 
-    @if (Model.Pool != null && Model.Pool.Any())
+<div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+    @if (Model.Pool.Any())
     {
-        <h4>Wybierz jedną z @Model.Pool.Count profesji</h4>
-        <div class="list-group">
+        <h2 class="mb-4 text-lg font-semibold text-stone-200">Wybierz jedną z @Model.Pool.Count profesji</h2>
+        <div class="space-y-4">
             @foreach (var p in Model.Pool)
             {
-                <div class="list-group-item">
-                    <h5>@p.Name (@p.Class)</h5>
-                    <p>Tier 1 status: @p.Tiers.FirstOrDefault()?.Status</p>
-                    <form method="post" asp-page-handler="ChooseFromPool">
+                <div class="rounded-lg border border-stone-600 bg-stone-800/50 p-4">
+                    <h3 class="font-display text-lg text-amber-300">@p.Name</h3>
+                    <p class="text-sm text-stone-400">@p.Class · Tier 1: @p.Tiers.FirstOrDefault()?.Status</p>
+                    <form method="post" asp-page-handler="ChooseFromPool" class="mt-3">
                         <input type="hidden" name="chosen" value="@CreationContentService.ToKey(p)" />
-                        <button class="btn btn-primary">Wybierz tę profesję (+25 PD)</button>
+                        <button type="submit" class="rounded-lg bg-amber-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700">
+                            Wybierz (+25 PD)
+                        </button>
                     </form>
                 </div>
             }
         </div>
-
-        <hr />
-
-        <form method="post" asp-page-handler="Reroll">
-            <button class="btn btn-secondary">Rzuć ponownie (bez PD)</button>
+        <form method="post" asp-page-handler="Reroll" class="mt-6">
+            <button type="submit" class="rounded-lg bg-stone-700 px-4 py-2 text-sm text-stone-200 transition hover:bg-stone-600">
+                Rzuć ponownie (bez PD)
+            </button>
         </form>
     }
     else
     {
-        <h4>Wylosowana profesja:</h4>
-
-        <div class="alert alert-info">
-            <strong>@Model.Rolled?.Name</strong> (@Model.Rolled?.Class)
+        <h2 class="mb-3 text-lg font-semibold text-stone-200">Wylosowana profesja</h2>
+        <div class="mb-6 rounded-lg border border-amber-800/40 bg-amber-950/30 px-4 py-4">
+            <p class="font-display text-xl font-bold text-amber-300">@Model.Rolled?.Name</p>
+            <p class="text-sm text-stone-400">@Model.Rolled?.Class · @Model.Rolled?.Tiers?.FirstOrDefault()?.Status</p>
         </div>
 
-        <h5>Tier 1</h5>
-        <p>Status: @Model.Rolled?.Tiers?.FirstOrDefault()?.Status</p>
-
-        <form method="post" asp-page-handler="Accept" class="mb-2">
-            <input type="hidden" name="chosen" value="@(Model.Rolled != null ? CreationContentService.ToKey(Model.Rolled) : "")" />
-            <input type="hidden" name="eligibleXp" value="@Model.EligibleXp" />
-            <button class="btn btn-success">Akceptuję (+@Model.EligibleXp PD)</button>
-        </form>
-
-        @if (Model.EligibleXp == 0)
-        {
-            <form method="post" asp-page-handler="Reroll">
-                <button class="btn btn-primary">Rzuć inną losową profesję</button>
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <form method="post" asp-page-handler="Accept">
+                <input type="hidden" name="chosen" value="@(Model.Rolled != null ? CreationContentService.ToKey(Model.Rolled) : "")" />
+                <input type="hidden" name="eligibleXp" value="@Model.EligibleXp" />
+                <button type="submit" class="w-full rounded-lg bg-emerald-800 px-4 py-3 font-medium text-white transition hover:bg-emerald-700 sm:w-auto">
+                    Akceptuję (+@Model.EligibleXp PD)
+                </button>
             </form>
-        }
-        else
-        {
-            <form method="post" asp-page-handler="GeneratePool">
-                <input type="hidden" name="current" value="@(Model.Rolled != null ? CreationContentService.ToKey(Model.Rolled) : "")" />
-                <button class="btn btn-primary">Odrzucam — pokaż 2 dodatkowe (możesz wybrać spośród 3)</button>
-            </form>
-        }
+
+            @if (Model.EligibleXp == 0)
+            {
+                <form method="post" asp-page-handler="Reroll">
+                    <button type="submit" class="w-full rounded-lg bg-stone-700 px-4 py-3 text-stone-200 transition hover:bg-stone-600 sm:w-auto">
+                        Rzuć inną losową profesję
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form method="post" asp-page-handler="GeneratePool">
+                    <input type="hidden" name="current" value="@(Model.Rolled != null ? CreationContentService.ToKey(Model.Rolled) : "")" />
+                    <button type="submit" class="w-full rounded-lg bg-amber-800 px-4 py-3 font-medium text-white transition hover:bg-amber-700 sm:w-auto">
+                        Odrzucam — pokaż 2 dodatkowe (wybór z 3)
+                    </button>
+                </form>
+            }
+        </div>
     }
-
 </div>

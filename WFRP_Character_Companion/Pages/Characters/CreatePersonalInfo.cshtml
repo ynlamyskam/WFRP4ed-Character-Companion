@@ -1,49 +1,53 @@
 @page
 @model WFRP_Character_Companion.Pages.Characters.CreatePersonalInfoModel
+@{
+    ViewData["Title"] = "Dane osobowe";
+}
 
-<h2>Tworzenie postaci — Informacje osobiste</h2>
+@await Html.PartialAsync("_CreationProgress", 3)
+<partial name="_ErrorAlert" />
 
-<div class="card p-3">
-    <form method="post">
-        <div class="mb-3">
-            <label class="form-label">Imię</label>
-            <input asp-for="Input.Name" class="form-control" />
+<h1 class="font-display mb-6 text-2xl font-bold text-amber-500 sm:text-3xl">Informacje osobiste</h1>
+
+<div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+    <form method="post" class="space-y-5">
+        <div>
+            <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Name">Imię</label>
+            <input asp-for="Input.Name" required class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
         </div>
 
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Wiek</label>
-                <input asp-for="Input.Age" class="form-control" type="number" min="0" />
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Age">Wiek</label>
+                <input asp-for="Input.Age" type="number" min="0" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
             </div>
-
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Wzrost (cm)</label>
-                <input asp-for="Input.Height" class="form-control" type="number" min="0" />
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Height">Wzrost (cm)</label>
+                <input asp-for="Input.Height" type="number" min="0" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
             </div>
-
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Waga (kg)</label>
-                <input asp-for="Input.Weight" class="form-control" type="number" min="0" />
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Weight">Waga (kg)</label>
+                <input asp-for="Input.Weight" type="number" min="0" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
             </div>
-
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Kolor oczu</label>
-                <input asp-for="Input.EyeColor" class="form-control" />
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Kolor włosów</label>
-                <input asp-for="Input.HairColor" class="form-control" />
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Opcjonalny opis</label>
-                <textarea asp-for="Input.Description" class="form-control" rows="3"></textarea>
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.EyeColor">Kolor oczu</label>
+                <input asp-for="Input.EyeColor" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Dalej</button>
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.HairColor">Kolor włosów</label>
+                <input asp-for="Input.HairColor" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
+            </div>
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Description">Opis</label>
+                <textarea asp-for="Input.Description" rows="3" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="rounded-lg bg-amber-800 px-6 py-3 font-medium text-white transition hover:bg-amber-700">
+            Dalej
+        </button>
     </form>
 </div>

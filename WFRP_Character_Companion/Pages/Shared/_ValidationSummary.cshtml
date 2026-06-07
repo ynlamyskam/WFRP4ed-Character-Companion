@@ -1,0 +1,21 @@
+@if (!ViewData.ModelState.IsValid)
+{
+    var errors = ViewData.ModelState.Values
+        .SelectMany(v => v.Errors)
+        .Select(e => e.ErrorMessage)
+        .Where(m => !string.IsNullOrWhiteSpace(m))
+        .Distinct()
+        .ToList();
+
+    if (errors.Count > 0)
+    {
+        <div class="mb-6 rounded-lg border border-red-800/60 bg-red-950/50 px-4 py-3 text-red-200" role="alert">
+            <ul class="list-inside list-disc space-y-1 text-sm">
+                @foreach (var err in errors)
+                {
+                    <li>@err</li>
+                }
+            </ul>
+        </div>
+    }
+}

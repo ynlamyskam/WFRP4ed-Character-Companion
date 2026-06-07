@@ -1,17 +1,33 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Strona Główna";
+    ViewData["Title"] = "Strona główna";
 }
 
 <div class="text-center">
-    <h5 class="display-4">Witaj w pomocniku postaci do systemu Warhammer Fantasy Roleplay 4 ed.</h5>
-    <hr />
-    <h2>Centrum zarządzania:</h2>
-    <div id="actionsContainer" class="d-flex flex-wrap gap-2 justify-content-center">
-        <a class="btn btn-primary" asp-page="/Characters/Create">Stwórz postać</a>
-        <a class="btn btn-primary" asp-page="/Campaigns/Create">Stwórz kampanię</a>
-        <a class="btn btn-outline-secondary" asp-page="/Characters/CharacterHub">Lista postaci</a>
-        <a class="btn btn-outline-secondary" asp-page="/Campaigns/CampaignHub">Lista kampanii</a>
+    <h1 class="font-display mb-4 text-3xl font-bold text-amber-500 sm:text-4xl">
+        WFRP Character Companion
+    </h1>
+    <p class="mx-auto mb-10 max-w-xl text-stone-400">
+        Pomocnik do tworzenia i zarządzania postaciami w Warhammer Fantasy Roleplay 4 ed.
+    </p>
+
+    <div class="flex flex-wrap justify-center gap-3">
+        <a asp-page="/Characters/CreateRace"
+           class="rounded-lg bg-emerald-800 px-5 py-3 font-medium text-white transition hover:bg-emerald-700">
+            Stwórz postać
+        </a>
+        <a asp-page="/Campaigns/Create"
+           class="rounded-lg bg-amber-800 px-5 py-3 font-medium text-white transition hover:bg-amber-700">
+            Stwórz kampanię
+        </a>
+        <a asp-page="/Characters/CharacterHub"
+           class="rounded-lg border border-stone-600 px-5 py-3 text-stone-300 transition hover:border-stone-500 hover:bg-stone-800">
+            Postacie
+        </a>
+        <a asp-page="/Campaigns/CampaignHub"
+           class="rounded-lg border border-stone-600 px-5 py-3 text-stone-300 transition hover:border-stone-500 hover:bg-stone-800">
+            Kampanie
+        </a>
     </div>
 </div>

@@ -3,33 +3,43 @@
 @inject UserManager<ApplicationUser> UserManager
 @model WFRP_Character_Companion.Pages.ProfileModel
 @{
-    <h2>Profil użytkownika</h2>
-
-    <form method="post" enctype="multipart/form-data">
-        <div>
-            <label>Nazwa użytkownika</label>
-            <input asp-for="Input.DisplayName" />
-        </div>
-
-        <div>
-            <label>Awatar</label>
-            <input asp-for="Input.AvatarFile" type="file" accept=".png,.jpg,.jpeg" />
-        </div>
-
-        <button type="submit">Zapisz</button>
-    </form>
-
-    <hr />
-
-    <h3>Podgląd</h3>
-
-    <p><strong>@Model.Input.DisplayName</strong></p>
-
+    ViewData["Title"] = "Profil";
     var appUser = await UserManager.GetUserAsync(User);
-
-    if (appUser?.AvatarFileName != null)
-    {
-        <img src="/avatars/@appUser.AvatarFileName"
-             style="width:100px;height:100px;border-radius:50%;object-fit:cover;" />
-    }
 }
+
+<h1 class="font-display mb-6 text-2xl font-bold text-amber-500 sm:text-3xl">Profil użytkownika</h1>
+
+<div class="grid gap-6 lg:grid-cols-2">
+    <div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+        <form method="post" enctype="multipart/form-data" class="space-y-5">
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.DisplayName">Nazwa wyświetlana</label>
+                <input asp-for="Input.DisplayName"
+                       class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
+            </div>
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.AvatarFile">Awatar</label>
+                <input asp-for="Input.AvatarFile" type="file" accept=".png,.jpg,.jpeg"
+                       class="w-full text-sm text-stone-400 file:mr-4 file:rounded-lg file:border-0 file:bg-stone-700 file:px-4 file:py-2 file:text-stone-200" />
+            </div>
+            <button type="submit" class="rounded-lg bg-emerald-800 px-5 py-2.5 font-medium text-white transition hover:bg-emerald-700">
+                Zapisz
+            </button>
+        </form>
+    </div>
+
+    <div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-stone-500">Podgląd</h2>
+        <div class="flex items-center gap-4">
+            @if (appUser?.AvatarFileName != null)
+            {
+                <img src="/avatars/@appUser.AvatarFileName" alt="" class="h-20 w-20 rounded-full object-cover ring-2 ring-stone-700" />
+            }
+            else
+            {
+                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-stone-800 text-2xl text-stone-500">?</div>
+            }
+            <p class="font-display text-xl text-stone-100">@(string.IsNullOrWhiteSpace(Model.Input.DisplayName) ? "Gracz" : Model.Input.DisplayName)</p>
+        </div>
+    </div>
+</div>

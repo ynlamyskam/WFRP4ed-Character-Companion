@@ -1,74 +1,92 @@
 @page
 @model WFRP_Character_Companion.Pages.Campaigns.CampaignHubModel
 @{
-    ViewData["Title"] = "Lista kampanii";
+    ViewData["Title"] = "Kampanie";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Twoje kampanie</h2>
-    <a class="btn btn-primary" asp-page="/Campaigns/Create">Stwórz kampanię</a>
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h1 class="font-display text-2xl font-bold text-amber-500 sm:text-3xl">Twoje kampanie</h1>
+        <p class="mt-1 text-stone-400">Gry, w których uczestniczysz lub które prowadzisz.</p>
+    </div>
+    <a asp-page="/Campaigns/Create"
+       class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-emerald-800 px-5 py-3 font-medium text-white transition hover:bg-emerald-700">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Stwórz kampanię
+    </a>
 </div>
 
 @if (Model.Campaigns.Count == 0)
 {
-    <p>Nie masz jeszcze żadnych kampanii.</p>
+    <div class="rounded-xl border border-dashed border-stone-700 bg-stone-900/50 px-6 py-12 text-center">
+        <p class="text-stone-500">Nie masz jeszcze żadnych kampanii.</p>
+    </div>
 }
 else
 {
-    <ol>
+    <div class="space-y-4">
         @foreach (var campaign in Model.Campaigns)
         {
-            <li class="mb-4">
-                <div class="d-flex align-items-baseline gap-2">
-                    <span class="fw-semibold">@campaign.Name</span>
+            <article class="rounded-xl border border-stone-700 bg-stone-900/80 p-5 shadow-lg">
+                <div class="mb-4 flex flex-wrap items-center gap-2">
+                    <h2 class="font-display text-xl font-semibold text-stone-100">@campaign.Name</h2>
                     @if (campaign.IsOwner)
                     {
-                        <span class="badge text-bg-secondary">Twórca</span>
+                        <span class="rounded-full bg-amber-900/50 px-2.5 py-0.5 text-xs font-medium text-amber-300">Twórca / MG</span>
                     }
                     else if (!campaign.CanManage)
                     {
-                        <span class="badge text-bg-light text-dark border">Uczestnik</span>
+                        <span class="rounded-full bg-stone-800 px-2.5 py-0.5 text-xs text-stone-400">Uczestnik</span>
                     }
-                    @if (campaign.CanManage)
-                    {
-                        <a class="small" asp-page="/Campaigns/Edit" asp-route-id="@campaign.Id">Edytuj</a>
-                    }
-                    <a class="small" asp-page="/Campaigns/AddCharacter" asp-route-id="@campaign.Id">Postacie</a>
+                    <div class="ml-auto flex flex-wrap gap-2">
+                        @if (campaign.CanManage)
+                        {
+                            <a asp-page="/Campaigns/Edit" asp-route-id="@campaign.Id"
+                               class="rounded-lg border border-stone-600 px-3 py-1.5 text-sm text-stone-300 transition hover:border-amber-700 hover:text-amber-400">
+                                Edytuj
+                            </a>
+                        }
+                        <a asp-page="/Campaigns/AddCharacter" asp-route-id="@campaign.Id"
+                           class="rounded-lg bg-stone-800 px-3 py-1.5 text-sm text-stone-200 transition hover:bg-stone-700">
+                            Postacie
+                        </a>
+                    </div>
                 </div>
 
                 @if (campaign.Members.Count == 0)
                 {
-                    <p class="text-muted ms-3 mb-0">Brak uczestników.</p>
+                    <p class="text-sm text-stone-500">Brak uczestników.</p>
                 }
                 else
                 {
-                    <ul class="mt-2 mb-0">
+                    <div class="space-y-3">
                         @foreach (var member in campaign.Members)
                         {
-                            <li>
-                                <span class="fw-medium">@member.DisplayName</span>
+                            <div class="rounded-lg border border-stone-800 bg-stone-800/30 px-4 py-3">
+                                <p class="font-medium text-stone-200">@member.DisplayName</p>
                                 @if (member.Characters.Count == 0)
                                 {
-                                    <span class="text-muted">— brak postaci</span>
+                                    <p class="mt-1 text-sm text-stone-500">Brak postaci w kampanii</p>
                                 }
                                 else
                                 {
-                                    <ul class="mb-1">
+                                    <ul class="mt-2 flex flex-wrap gap-2">
                                         @foreach (var character in member.Characters)
                                         {
                                             <li>
-                                                <a asp-page="/Characters/Details" asp-route-id="@character.CharacterId">
+                                                <a asp-page="/Characters/Details" asp-route-id="@character.CharacterId"
+                                                   class="inline-block rounded-md bg-stone-900 px-2.5 py-1 text-sm text-amber-400 transition hover:bg-stone-950 hover:text-amber-300">
                                                     @character.Name
                                                 </a>
                                             </li>
                                         }
                                     </ul>
                                 }
-                            </li>
+                            </div>
                         }
-                    </ul>
+                    </div>
                 }
-            </li>
+            </article>
         }
-    </ol>
+    </div>
 }
