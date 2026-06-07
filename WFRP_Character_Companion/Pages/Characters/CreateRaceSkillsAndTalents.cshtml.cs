@@ -44,7 +44,13 @@ namespace WFRP_Character_Companion.Pages.Characters
                 if (list != null) all.AddRange(list);
             }
 
-            var origin = all.FirstOrDefault(o => o.Name == originName);
+
+            var origin = all.FirstOrDefault(o => !string.IsNullOrEmpty(o.Name) && string.Equals(o.Name, originName, StringComparison.OrdinalIgnoreCase));
+            if (origin == null && !string.IsNullOrEmpty(originName))
+            {
+                var norm = Normalize(originName);
+                origin = all.FirstOrDefault(o => !string.IsNullOrEmpty(o.Name) && Normalize(o.Name) == norm);
+            }
             if (origin != null)
             {
                 // talents
@@ -174,6 +180,20 @@ namespace WFRP_Character_Companion.Pages.Characters
             _db.CharacterDrafts.Add(draft);
             await _db.SaveChangesAsync();
             return draft;
+        }
+
+        private static string Normalize(string? s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+            var form = s.Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+            foreach (var ch in form)
+            {
+                var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(System.Text.NormalizationForm.FormC).ToLowerInvariant().Replace(" ", "");
         }
     }
 }

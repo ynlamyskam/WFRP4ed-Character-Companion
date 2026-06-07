@@ -16,14 +16,22 @@ namespace WFRP_Character_Companion.Pages.Characters
 
         public List<string> TierSkills { get; set; } = new();
         public List<string> TierTalents { get; set; } = new();
+        public string DebugDraftJson { get; set; } = string.Empty;
+        public int LoadedProfessionsCount { get; set; }
+        public List<string> LoadedProfessionNames { get; set; } = new();
+        public string FoundProfessionName { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync()
         {
             var draft = await GetOrCreateDraft();
+            DebugDraftJson = draft.StateJson;
             var professionName = GetProfessionFromDraft(draft);
+            FoundProfessionName = professionName ?? string.Empty;
             if (!string.IsNullOrEmpty(professionName))
             {
                 var professions = await LoadAllProfessions();
+                LoadedProfessionsCount = professions.Count;
+                LoadedProfessionNames = professions.Where(p => !string.IsNullOrEmpty(p.Name)).Select(p => p.Name!).ToList();
                 var norm = Normalize(professionName);
                 var prof = professions.FirstOrDefault(p => !string.IsNullOrEmpty(p.Name) && Normalize(p.Name) == norm);
                 if (prof != null && prof.Tiers != null && prof.Tiers.Count > 0)
@@ -42,6 +50,21 @@ namespace WFRP_Character_Companion.Pages.Characters
             var draft = await GetOrCreateDraft();
             var state = JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson) ?? new Dictionary<string, object>();
 
+            // ensure TierSkills/TierTalents are populated (POST doesn't run OnGet)
+            var professionName = GetProfessionFromDraft(draft);
+            if (!string.IsNullOrEmpty(professionName))
+            {
+                var professions = await LoadAllProfessions();
+                var norm = Normalize(professionName);
+                var prof = professions.FirstOrDefault(p => !string.IsNullOrEmpty(p.Name) && Normalize(p.Name) == norm);
+                if (prof != null && prof.Tiers != null && prof.Tiers.Count > 0)
+                {
+                    var tier1 = prof.Tiers[0];
+                    TierSkills = tier1.Skills ?? new List<string>();
+                    TierTalents = tier1.Talents ?? new List<string>();
+                }
+            }
+
             // read points
             var pts = new Dictionary<string, int>();
             for (int i = 0; i < TierSkills.Count; i++)
@@ -53,12 +76,12 @@ namespace WFRP_Character_Companion.Pages.Characters
                     pts[TierSkills[i]] = 0;
             }
 
-            var total = pts.Values.Sum();
+            var total = pts.Values.Sum(v => v);
             if (total != 40)
                 return BadRequest("Musisz rozdzielić dokładnie 40 punktów.");
 
             foreach (var kv in pts)
-                state[$"Advance_{kv.Key}"] = kv.Value;
+                state[$"Advance_{TierSkills[pts.Keys.ToList().IndexOf(kv.Key)]}"] = kv.Value;
 
             // chosen talent
             var chosen = Request.Form.ContainsKey("chosenTalent") ? Request.Form["chosenTalent"].ToString() ?? string.Empty : string.Empty;

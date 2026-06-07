@@ -6,6 +6,10 @@
 <div class="card p-3">
     <p>Rozdziel 40 punktów między umiejętności wymienione w Tier 1 Twojej profesji jako rozwinięcia.</p>
 
+    <div class="mb-2 small text-muted">Debug: Draft.StateJson: @Model.DebugDraftJson</div>
+    <div class="mb-2 small text-muted">Loaded professions: @Model.LoadedProfessionsCount</div>
+    <div class="mb-2 small text-muted">Found profession in draft: @Model.FoundProfessionName</div>
+
     @if (!Model.TierSkills.Any())
     {
         <p class="text-muted">Brak umiejętności w Tier 1 tej profesji.</p>

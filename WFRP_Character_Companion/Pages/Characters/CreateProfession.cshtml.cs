@@ -22,7 +22,8 @@ namespace WFRP_Character_Companion.Pages.Characters
         {
             var draft = await GetOrCreateDraft();
             var professions = await LoadAllProfessions();
-            Rolled = professions[Random.Shared.Next(professions.Count)];
+            if (professions.Count > 0)
+                Rolled = professions[Random.Shared.Next(professions.Count)];
             EligibleXp = 50;
             return Page();
         }
@@ -61,7 +62,7 @@ namespace WFRP_Character_Companion.Pages.Characters
                 return Page();
             }
 
-            var currentP = professions.FirstOrDefault(p => p.Name == current) ?? (professions.Count > 0 ? professions[Random.Shared.Next(professions.Count)] : null);
+            var currentP = FindProfession(professions, current) ?? (professions.Count > 0 ? professions[Random.Shared.Next(professions.Count)] : null);
             if (currentP != null) pool.Add(currentP);
 
             var others = professions.Where(p => currentP == null || p.Name != currentP.Name)
@@ -78,6 +79,32 @@ namespace WFRP_Character_Companion.Pages.Characters
             Pool = pool.GroupBy(p => p.Name).Select(g => g.First()).Take(3).ToList();
             EligibleXp = 25;
             return Page();
+        }
+
+        private Profession? FindProfession(List<Profession> professions, string? name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+            var exact = professions.FirstOrDefault(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
+            if (exact != null) return exact;
+            var norm = Normalize(name);
+            var normMatch = professions.FirstOrDefault(p => !string.IsNullOrEmpty(p.Name) && Normalize(p.Name) == norm);
+            if (normMatch != null) return normMatch;
+            var contains = professions.FirstOrDefault(p => !string.IsNullOrEmpty(p.Name) && Normalize(p.Name).Contains(norm));
+            return contains;
+        }
+
+        private static string Normalize(string? s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+            var form = s.Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+            foreach (var ch in form)
+            {
+                var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(System.Text.NormalizationForm.FormC).ToLowerInvariant().Replace(" ", "");
         }
 
         public async Task<IActionResult> OnPostChooseFromPoolAsync(string chosen)

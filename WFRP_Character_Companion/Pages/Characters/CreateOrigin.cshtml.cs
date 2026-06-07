@@ -17,10 +17,23 @@ namespace WFRP_Character_Companion.Pages.Characters
         public CharacterDraft Draft { get; set; } = default!;
         public Origin? RolledOrigin { get; set; }
         public List<Origin> AllOrigins { get; set; } = new();
+        public List<Origin> FilteredOrigins { get; set; } = new();
+        public string DebugDraftJson { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync()
         {
             Draft = await GetOrCreateDraft();
+
+            // if race not set on this draft (possible if a new draft was created), try to find latest draft for the user
+            if (string.IsNullOrEmpty(Draft.Race))
+            {
+                var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
+                var latest = await _db.CharacterDrafts.Where(x => x.UserId == user.Id).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+                if (latest != null && !string.IsNullOrEmpty(latest.Race))
+                {
+                    Draft = latest;
+                }
+            }
 
             // Load origins from Data/Seed/Content/origins*.json or Content/origins*.json
             var contentDir1 = Path.Combine(_env.ContentRootPath, "Content");
@@ -43,6 +56,7 @@ namespace WFRP_Character_Companion.Pages.Characters
             }
 
             AllOrigins = combined;
+            DebugDraftJson = Draft.StateJson;
 
             // Filter by draft.Race when available (match by race name)
             var matching = new List<Origin>();
@@ -61,14 +75,11 @@ namespace WFRP_Character_Companion.Pages.Characters
                 }
             }
 
+            FilteredOrigins = matching;
             if (matching.Any())
-            {
                 RolledOrigin = matching[Random.Shared.Next(matching.Count)];
-            }
             else
-            {
                 RolledOrigin = null;
-            }
 
             return Page();
         }

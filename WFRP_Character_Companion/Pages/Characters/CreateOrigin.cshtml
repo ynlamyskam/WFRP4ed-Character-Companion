@@ -6,6 +6,7 @@
     <div class="card p-3">
         <h4>Wylosowane pochodzenie:</h4>
         <p class="text-muted">Wybrana rasa: @Model.Draft.Race</p>
+        <p class="small text-muted">Draft.StateJson: @Model.DebugDraftJson</p>
     @if (Model.RolledOrigin != null)
     {
         <div class="alert alert-info"><strong>@Model.RolledOrigin.Name</strong> (@Model.RolledOrigin.Race)</div>
@@ -24,8 +25,8 @@
 
         <h5>Albo wybierz ręcznie:</h5>
         <form method="post" asp-page-handler="Choose">
-        <select name="originName" class="form-select">
-            @foreach (var o in Model.AllOrigins.Where(x => string.IsNullOrEmpty(Model.Draft.Race) || string.Equals(x.Race, Model.Draft.Race, StringComparison.OrdinalIgnoreCase)))
+            <select name="originName" class="form-select">
+            @foreach (var o in Model.FilteredOrigins)
             {
                 <option value="@o.Name">@o.Name (@o.Race)</option>
             }
