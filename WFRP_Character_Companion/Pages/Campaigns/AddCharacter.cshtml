@@ -1,0 +1,86 @@
+@page "{id:int}"
+@model WFRP_Character_Companion.Pages.Campaigns.AddCharacterModel
+@{
+    ViewData["Title"] = "Postacie w kampanii";
+}
+
+<h2 class="mb-1">@Model.CampaignName</h2>
+<p class="text-muted mb-4">Zaznacz postacie, które mają należeć do tej kampanii. Odznaczenie usuwa postać z kampanii.</p>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <h4>Uczestnicy i postacie</h4>
+        @if (Model.CampaignView.Members.Count == 0)
+        {
+            <p class="text-muted">Brak uczestników.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var member in Model.CampaignView.Members)
+                {
+                    <li class="mb-2">
+                        <span class="fw-medium">@member.DisplayName</span>
+                        @if (member.Characters.Count == 0)
+                        {
+                            <span class="text-muted">— brak postaci</span>
+                        }
+                        else
+                        {
+                            <ul>
+                                @foreach (var character in member.Characters)
+                                {
+                                    <li>
+                                        <a asp-page="/Characters/Details" asp-route-id="@character.CharacterId">
+                                            @character.Name
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    <div class="col-lg-6">
+        <h4>Twoje postacie</h4>
+        <form method="post" asp-route-id="@Model.CampaignId">
+            @if (Model.UserCharacters.Count == 0)
+            {
+                <p class="text-muted">Nie masz jeszcze żadnych postaci.</p>
+            }
+            else
+            {
+                <div class="border rounded p-3 mb-3">
+                    @foreach (var character in Model.UserCharacters)
+                    {
+                        var isLinked = Model.SelectedCharacterIds.Contains(character.Id);
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="SelectedCharacterIds"
+                                   value="@character.Id"
+                                   id="char_@character.Id"
+                                   checked="@isLinked" />
+                            <label class="form-check-label" for="char_@character.Id">
+                                @character.Name
+                            </label>
+                        </div>
+                    }
+                </div>
+                <button type="submit" class="btn btn-primary">Zapisz</button>
+            }
+        </form>
+    </div>
+</div>
+
+<hr class="my-4" />
+
+@if (Model.CanManage)
+{
+    <a class="btn btn-outline-primary me-2" asp-page="/Campaigns/Edit" asp-route-id="@Model.CampaignId">Zarządzaj kampanią</a>
+}
+<a class="btn btn-outline-secondary" asp-page="/Campaigns/CampaignHub">Wróć do listy kampanii</a>
+

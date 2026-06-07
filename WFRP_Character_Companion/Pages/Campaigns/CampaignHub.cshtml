@@ -1,0 +1,74 @@
+@page
+@model WFRP_Character_Companion.Pages.Campaigns.CampaignHubModel
+@{
+    ViewData["Title"] = "Lista kampanii";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Twoje kampanie</h2>
+    <a class="btn btn-primary" asp-page="/Campaigns/Create">Stwórz kampanię</a>
+</div>
+
+@if (Model.Campaigns.Count == 0)
+{
+    <p>Nie masz jeszcze żadnych kampanii.</p>
+}
+else
+{
+    <ol>
+        @foreach (var campaign in Model.Campaigns)
+        {
+            <li class="mb-4">
+                <div class="d-flex align-items-baseline gap-2">
+                    <span class="fw-semibold">@campaign.Name</span>
+                    @if (campaign.IsOwner)
+                    {
+                        <span class="badge text-bg-secondary">Twórca</span>
+                    }
+                    else if (!campaign.CanManage)
+                    {
+                        <span class="badge text-bg-light text-dark border">Uczestnik</span>
+                    }
+                    @if (campaign.CanManage)
+                    {
+                        <a class="small" asp-page="/Campaigns/Edit" asp-route-id="@campaign.Id">Edytuj</a>
+                    }
+                    <a class="small" asp-page="/Campaigns/AddCharacter" asp-route-id="@campaign.Id">Postacie</a>
+                </div>
+
+                @if (campaign.Members.Count == 0)
+                {
+                    <p class="text-muted ms-3 mb-0">Brak uczestników.</p>
+                }
+                else
+                {
+                    <ul class="mt-2 mb-0">
+                        @foreach (var member in campaign.Members)
+                        {
+                            <li>
+                                <span class="fw-medium">@member.DisplayName</span>
+                                @if (member.Characters.Count == 0)
+                                {
+                                    <span class="text-muted">— brak postaci</span>
+                                }
+                                else
+                                {
+                                    <ul class="mb-1">
+                                        @foreach (var character in member.Characters)
+                                        {
+                                            <li>
+                                                <a asp-page="/Characters/Details" asp-route-id="@character.CharacterId">
+                                                    @character.Name
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    </ol>
+}

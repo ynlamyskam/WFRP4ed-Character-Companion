@@ -216,6 +216,69 @@ namespace WFRP_Character_Companion.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Campaign", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OwnerUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerUserId");
+
+                    b.ToTable("Campaigns");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CampaignCharacter", b =>
+                {
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LinkedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CampaignId", "CharacterId");
+
+                    b.HasIndex("CharacterId");
+
+                    b.ToTable("CampaignCharacters");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CampaignMember", b =>
+                {
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CampaignId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CampaignMembers");
+                });
+
             modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>
                 {
                     b.Property<int>("Id")
@@ -260,6 +323,43 @@ namespace WFRP_Character_Companion.Migrations
                     b.HasIndex("CharacterId");
 
                     b.ToTable("CharacterAttribute");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterDraft", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Experience")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Origin")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("OriginAccepted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Race")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("RaceAccepted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StateJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Step")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CharacterDrafts");
                 });
 
             modelBuilder.Entity("WFRP_Character_Companion.Models.CharacterSkill", b =>
@@ -311,6 +411,29 @@ namespace WFRP_Character_Companion.Migrations
                     b.HasIndex("TalentId");
 
                     b.ToTable("CharacterTalents");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Origin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PackageJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Race")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Origins");
                 });
 
             modelBuilder.Entity("WFRP_Character_Companion.Models.Skill", b =>
@@ -436,6 +559,55 @@ namespace WFRP_Character_Companion.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Campaign", b =>
+                {
+                    b.HasOne("WFRP_Character_Companion.Models.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CampaignCharacter", b =>
+                {
+                    b.HasOne("WFRP_Character_Companion.Models.Campaign", "Campaign")
+                        .WithMany("CampaignCharacters")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WFRP_Character_Companion.Models.Character", "Character")
+                        .WithMany()
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Campaign");
+
+                    b.Navigation("Character");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.CampaignMember", b =>
+                {
+                    b.HasOne("WFRP_Character_Companion.Models.Campaign", "Campaign")
+                        .WithMany("Members")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WFRP_Character_Companion.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Campaign");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>
                 {
                     b.HasOne("WFRP_Character_Companion.Models.ApplicationUser", "User")
@@ -505,6 +677,13 @@ namespace WFRP_Character_Companion.Migrations
                         .IsRequired();
 
                     b.Navigation("Talent");
+                });
+
+            modelBuilder.Entity("WFRP_Character_Companion.Models.Campaign", b =>
+                {
+                    b.Navigation("CampaignCharacters");
+
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>

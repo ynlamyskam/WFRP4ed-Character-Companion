@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Człowiek",
+    "movement": 4,
+    "minFate": 2,
+    "minResilience": 1,
+    "pointsToSpend": 3
+  },
+  {
+    "name": "Krasnolud",
+    "movement": 3,
+    "minFate": 0,
+    "minResilience": 2,
+    "pointsToSpend": 2
+  },
+  {
+    "name": "Niziołek",
+    "movement": 3,
+    "minFate": 0,
+    "minResilience": 2,
+    "pointsToSpend": 3
+  },
+  {
+    "name": "Wysoki Elf",
+    "movement": 5,
+    "minFate": 0,
+    "minResilience": 0,
+    "pointsToSpend": 2
+  },
+  {
+    "name": "Leśny Elf",
+    "movement": 5,
+    "minFate": 0,
+    "minResilience": 0,
+    "pointsToSpend": 2
+  },
+  {
+    "name": "Gnom",
+    "movement": 3,
+    "minFate": 2,
+    "minResilience": 0,
+    "pointsToSpend": 2
+  }
+]

@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using WFRP_Character_Companion.Data;
-using WFRP_Character_Companion.Data.Seed;
-using WFRP_Character_Companion.Data.Seed.Importers;
 using WFRP_Character_Companion.Models;
+using WFRP_Character_Companion.Models.Import;
 using WFRP_Character_Companion.Services;
-using WFRP_Character_Companion.Services.ContentParsing;
+using WFRP_Character_Companion.Services.Content;
 
 namespace WFRP_Character_Companion
 {
@@ -24,9 +24,92 @@ namespace WFRP_Character_Companion
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddRazorPages();
-            builder.Services.AddScoped<TalentImporter>();
-            builder.Services.AddScoped<TalentJsonParser>();
             builder.Services.AddScoped<TalentRulesService>();
+            builder.Services.AddScoped<IContentImporter<Talent>>(sp =>
+            {
+                var db = sp.GetRequiredService<ApplicationDbContext>();
+
+                var parser = new JsonContentParser<TalentImportDto, Talent>(dto =>
+                {
+                    return new Talent
+                    {
+                        Name = dto.Name,
+                        Description = dto.Description,
+                        MaxLevelType = dto.MaxLevelType,
+                        FixedMaxLevel = dto.FixedMaxLevel,
+                        MaxLevelAttributes = dto.MaxLevelAttributes ?? [],
+                        TestEffects = dto.Tests?.Select(x => new TalentTestEffect
+                        {
+                            SkillName = x.Skill,
+                            Condition = x.Condition,
+                            BonusPerLevelAbove1 = x.BonusPerLevelAbove1
+                        }).ToList() ?? []
+                    };
+                });
+
+                return new ContentImporter<TalentImportDto, Talent>(db, parser);
+            });
+
+            builder.Services.AddScoped<IContentImporter<Skill>>(sp =>
+            {
+                var db = sp.GetRequiredService<ApplicationDbContext>();
+
+                var parser = new JsonContentParser<SkillImportDto, Skill>(dto =>
+                {
+                    return new Skill
+                    {
+                        Name = dto.Name,
+                        IsAdvanced = dto.IsAdvanced,
+                        HasSpecialization = dto.HasSpecialization,
+                        GoverningAttribute = dto.GoverningAttribute
+                    };
+                });
+
+                return new ContentImporter<SkillImportDto, Skill>(db, parser);
+            });
+
+            builder.Services.AddScoped<IContentImporter<Origin>>(sp =>
+            {
+                var db = sp.GetRequiredService<ApplicationDbContext>();
+                var parser = new JsonContentParser<OriginImportDto, Origin>(dto =>
+                {
+                    var package = new OriginPackage
+                    {
+                        Skills = dto.Package.Skills?.Select(s =>
+                        {
+                            var type = s.Type ?? (s.Skill != null ? GrantType.Fixed : GrantType.Choice);
+                            return new SkillGrant
+                            {
+
+                                Type = type,
+                                Choose = s.Choose ?? 0,
+                                Skill = s.Skill == null ? null : new SkillRef { Name = s.Skill.Name, Specialization = s.Skill.Specialization },
+                                Options = s.Options?.Select(o => new SkillRef { Name = o.Name, Specialization = o.Specialization }).ToList() ?? []
+                            };
+                        }).ToList() ?? [],
+                        Talents = dto.Package.Talents?.Select(t =>
+                        {
+                            var type = t.Type ?? (t.Talent != null ? TalentGrantType.Fixed : TalentGrantType.Choice);
+                            return new TalentGrant
+                            {
+                                Type = type,
+                                Choose = t.Choose ?? 0,
+                                Count = t.Count ?? 0,
+                                Talent = t.Talent == null ? null : new TalentRef { Name = t.Talent.Name, Specialization = t.Talent.Specialization },
+                                Options = t.Options?.Select(o => new TalentRef { Name = o.Name, Specialization = o.Specialization }).ToList() ?? []
+                            };
+                        }).ToList() ?? []
+                    };
+                    
+                    return new Origin
+                    {
+                        Race = dto.Race,
+                        Name = dto.Name,
+                        PackageJson = JsonSerializer.Serialize(package, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, Converters = {new JsonStringEnumConverter()}})
+                    };
+                });
+                return new ContentImporter<OriginImportDto, Origin>(db, parser);
+            });
 
             var app = builder.Build();
 
@@ -35,12 +118,47 @@ namespace WFRP_Character_Companion
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 db.Database.Migrate();
+                CampaignMigrationFix.ApplyIfNeeded(db);
 
-                var importer = scope.ServiceProvider.GetRequiredService<TalentImporter>();
+                var talentImporter = scope.ServiceProvider.GetRequiredService<IContentImporter<Talent>>();
+                talentImporter.Import("Data/Seed/Content/talents.json");
 
-                importer.Import("Data/Seed/Content/talents.json");
+                var skillImporter = scope.ServiceProvider.GetRequiredService<IContentImporter<Skill>>();
+                skillImporter.Import("Data/Seed/Content/skills.json");
 
-                SkillSeed.SeedSkills(db);
+                var originImporter = scope.ServiceProvider.GetRequiredService<IContentImporter<Origin>>();
+                //originImporter.Import("Data/Seed/Content/origins.json");
+
+                var contentDir = Path.Combine(Directory.GetCurrentDirectory(), "Data", "Seed", "Content");
+                var originFiles = Directory.GetFiles(contentDir, "origins*.json")
+                    .Where(f => !f.EndsWith("origins.combined.json", StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(f => f)
+                    .ToArray();
+
+                var combined = new List<OriginImportDto>();
+                var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                jsonOptions.Converters.Add(new JsonStringEnumConverter());
+
+                foreach (var f in originFiles)
+                {
+                    var txt = File.ReadAllText(f);
+                    var list = JsonSerializer.Deserialize<List<OriginImportDto>>(txt, jsonOptions);
+                    if (list != null)
+                        combined.AddRange(list);
+                }
+
+                // dedupe by Race+Name to avoid duplicates across files
+                var deduped = combined
+                    .GroupBy(o => (Race: o.Race ?? string.Empty, Name: o.Name ?? string.Empty))
+                    .Select(g => g.First())
+                    .ToList();
+
+                var combinedPath = Path.Combine(contentDir, "origins.combined.json");
+                File.WriteAllText(combinedPath, JsonSerializer.Serialize(deduped, new JsonSerializerOptions { WriteIndented = true }));
+
+                originImporter.Import(combinedPath);
+
+                try { File.Delete(combinedPath); } catch { /* ignore */ }
             }
 
             // Configure the HTTP request pipeline.
@@ -59,6 +177,7 @@ namespace WFRP_Character_Companion
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();

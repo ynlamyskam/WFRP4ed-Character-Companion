@@ -1,0 +1,659 @@
+[
+  {
+    "race": "Człowiek",
+    "name": "Altdorf - Hexxerbezrik",
+    "package": {
+      "skills": [
+        {
+          "skill": {
+            "name": "Opanowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wycena"
+          }
+        },
+        {
+          "skill": {
+            "name": "Zastraszanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Intuicja"
+          }
+        },
+        {
+          "skill": {
+            "name": "Język",
+            "specialization": "Klasyczny"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Reikland"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Magia"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Biała",
+            "specialization": "Bijatyka"
+          }
+        },
+        {
+          "skill": {
+            "name": "Percepcja"
+          }
+        },
+        {
+          "skill": {
+            "name": "Zwinne Palce"
+          }
+        },
+        {
+          "skill": {
+            "name": "Skradanie",
+            "specialization": "Miasto"
+          }
+        },
+        {
+          "skill": {
+            "name": "Plotkowanie"
+          }
+        }
+      ],
+      "talents": [
+        {
+          "talent": {
+            "name": "Wróżba Losu"
+          }
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Niegodny Uwagi" },
+            { "name": "Czytanie/pisanie" }
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Błyskotliwość" },
+            { "name": "Charyzmatyczny" }
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Percepcja Magiczna" },
+            { "name": "Szósty Zmysł" }
+          ]
+        },
+        {
+          "type": "Random",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf - Doki",
+    "package": {
+      "skills": [
+        {
+          "skill": {
+            "name": "Mocna Głowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wycena"
+          }
+        },
+        {
+          "skill": {
+            "name": "Plotkowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Targowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Zastraszanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Intuicja"
+          }
+        },
+        {
+          "skill": {
+            "name": "Język",
+            "specialization": "Złodziejska Grypsera"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Reikland"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Biała",
+            "specialization": "Bijatyka"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wioślarstwo"
+          }
+        },
+        {
+          "skill": {
+            "name": "Żeglarstwo",
+            "specialization": "Barki"
+          }
+        },
+        {
+          "type": "Fixed",
+          "skill": {
+            "name": "Zwinne Palce"
+          }
+        }
+      ],
+      "talents": [
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Przestępca" },
+            {
+              "name": "Etykieta",
+              "specialization": "Kupcy"
+            }
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Żyłka Handlowa" },
+            { "name": "Groźny" }
+          ]
+        },
+        {
+          "talent": {
+            "name": "Wróżba Losu"
+          }
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Błyskotliwość" },
+            { "name": "Charyzmatyczny" }
+          ]
+        },
+        {
+          "type": "Random",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf - Południowy Brzeg",
+    "package": {
+      "skills": [
+        {
+          "skill": {
+            "name": "Opieka nad Zwierzętami"
+          }
+        },
+        {
+          "skill": {
+            "name": "Charyzma"
+          }
+        },
+        {
+          "skill": {
+            "name": "Opanowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Plotkowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Język",
+            "specialization": "Dowolny"
+          }
+        },
+        {
+          "skill": {
+            "name": "Dowodzenie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization":  "Dowolna"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Biała",
+            "specialization":  "Podstawowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Biała",
+            "specialization":  "Szermiercza"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Zasięgowa",
+            "specialization":  "Prochowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Zasięgowa",
+            "specialization":  "Łuk"
+          }
+        },
+        {
+          "skill": {
+            "name": "Jeździectwo",
+            "specialization": "Konie"
+          }
+        }
+      ],
+      "talents": [
+        {
+          "talent": {
+            "name": "Wróżba Losu"
+          }
+        },
+        {
+          "talent": {
+            "name": "Etykieta",
+            "specialization": "Dowolna Grupa"
+          }
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Błękitna Krew" },
+            { "name": "Czysta Dusza" }
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Czytanie/pisanie" },
+            { "name": "Pomocny" }
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Błyskotliwość" },
+            { "name": "Charyzmatyczny" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf - Dzielnica Wschodnia",
+    "package": {
+      "skills": [
+        {
+          "skill": {
+            "name": "Opanowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wycena"
+          }
+        },
+        {
+          "skill": {
+            "name": "Plotkowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Targowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Zastraszanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Intuicja"
+          }
+        },
+        {
+          "type": "Choice",
+          "options": [
+            {  "name": "Język",
+              "specialization": "Złodziejska Grypsera"
+            },
+            {
+              "name": "Język",
+              "specialization": "Bitewny"
+            }
+          ]
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Reikland"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Biała",
+            "specialization": "Bijatyka"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Zasięgowa",
+            "specialization": "Prochowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Zwinne Palce"
+          }
+        },
+        {
+          "skill": {
+            "name": "Skradanie",
+            "specialization": "Miasto"
+          }
+        }
+      ],
+      "talents": [
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Przekonujący" },
+            { "name": "Chodu!" }
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Przestępca" },
+            { "name": "Chodu!" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  },
+  {
+    "race": "Człowiek",
+    "name": "Altdorf Doki",
+    "package": {
+      "skills": [],
+      "talents": []
+    }
+  }
+]
