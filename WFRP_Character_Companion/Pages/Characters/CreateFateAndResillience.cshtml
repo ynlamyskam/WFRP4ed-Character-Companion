@@ -1,0 +1,27 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreateFateAndResillienceModel
+
+<h2>Tworzenie postaci — Punkty Przeznaczenia i Punkty Bohatera</h2>
+
+<div class="card p-3">
+    <p>Rozdziel punkty Przeznaczenia oraz Punkty Bohatera.</p>
+
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Punkty Przeznaczenia (Fate)</label>
+            <input type="number" name="FateAssign" class="form-control" min="0" value="@Model.FateToAssign" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Punkty Bohatera (Hero)</label>
+            <input type="number" name="HeroAssign" class="form-control" min="0" value="@Model.HeroToAssign" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Motywacja (tekst)</label>
+            <input type="text" name="Motivation" class="form-control" value="@Model.Motivation" />
+        </div>
+
+        <button class="btn btn-primary">Zatwierdź</button>
+    </form>
+</div>
