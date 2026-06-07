@@ -1,0 +1,49 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreatePersonalInfoModel
+
+<h2>Tworzenie postaci — Informacje osobiste</h2>
+
+<div class="card p-3">
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Imię</label>
+            <input asp-for="Input.Name" class="form-control" />
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Wiek</label>
+                <input asp-for="Input.Age" class="form-control" type="number" min="0" />
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Wzrost (cm)</label>
+                <input asp-for="Input.Height" class="form-control" type="number" min="0" />
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Waga (kg)</label>
+                <input asp-for="Input.Weight" class="form-control" type="number" min="0" />
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Kolor oczu</label>
+                <input asp-for="Input.EyeColor" class="form-control" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Kolor włosów</label>
+                <input asp-for="Input.HairColor" class="form-control" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Opcjonalny opis</label>
+                <textarea asp-for="Input.Description" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Dalej</button>
+    </form>
+</div>

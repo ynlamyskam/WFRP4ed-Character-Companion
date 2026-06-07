@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WFRP_Character_Companion.Data;
 
@@ -10,9 +11,11 @@ using WFRP_Character_Companion.Data;
 namespace WFRP_Character_Companion.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260607081129_AddCreationProcess")]
+    partial class AddCreationProcess
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -214,69 +217,6 @@ namespace WFRP_Character_Companion.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("WFRP_Character_Companion.Models.Campaign", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OwnerUserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnerUserId");
-
-                    b.ToTable("Campaigns");
-                });
-
-            modelBuilder.Entity("WFRP_Character_Companion.Models.CampaignCharacter", b =>
-                {
-                    b.Property<int>("CampaignId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CharacterId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("LinkedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("CampaignId", "CharacterId");
-
-                    b.HasIndex("CharacterId");
-
-                    b.ToTable("CampaignCharacters");
-                });
-
-            modelBuilder.Entity("WFRP_Character_Companion.Models.CampaignMember", b =>
-                {
-                    b.Property<int>("CampaignId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("CampaignId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CampaignMembers");
                 });
 
             modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>
@@ -584,55 +524,6 @@ namespace WFRP_Character_Companion.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WFRP_Character_Companion.Models.Campaign", b =>
-                {
-                    b.HasOne("WFRP_Character_Companion.Models.ApplicationUser", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("WFRP_Character_Companion.Models.CampaignCharacter", b =>
-                {
-                    b.HasOne("WFRP_Character_Companion.Models.Campaign", "Campaign")
-                        .WithMany("CampaignCharacters")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WFRP_Character_Companion.Models.Character", "Character")
-                        .WithMany()
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Campaign");
-
-                    b.Navigation("Character");
-                });
-
-            modelBuilder.Entity("WFRP_Character_Companion.Models.CampaignMember", b =>
-                {
-                    b.HasOne("WFRP_Character_Companion.Models.Campaign", "Campaign")
-                        .WithMany("Members")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WFRP_Character_Companion.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Campaign");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>
                 {
                     b.HasOne("WFRP_Character_Companion.Models.ApplicationUser", "User")
@@ -702,13 +593,6 @@ namespace WFRP_Character_Companion.Migrations
                         .IsRequired();
 
                     b.Navigation("Talent");
-                });
-
-            modelBuilder.Entity("WFRP_Character_Companion.Models.Campaign", b =>
-                {
-                    b.Navigation("CampaignCharacters");
-
-                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("WFRP_Character_Companion.Models.Character", b =>

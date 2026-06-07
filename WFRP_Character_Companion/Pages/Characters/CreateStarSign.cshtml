@@ -1,0 +1,17 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreateStarSignModel
+
+<h2>Tworzenie postaci — Znak gwiezdny</h2>
+
+<div class="card p-3">
+    <h4>Wylosowany znak:</h4>
+    <div class="alert alert-info">
+        <strong>@Model.Rolled?.Name</strong>
+        <div>@Model.Rolled?.Description</div>
+    </div>
+
+    <form method="post">
+        <input type="hidden" name="chosenSign" value="@Model.Rolled?.Name" />
+        <button class="btn btn-primary">Akceptuj</button>
+    </form>
+</div>

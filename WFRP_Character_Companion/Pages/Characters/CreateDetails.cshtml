@@ -1,0 +1,15 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreateDetailsModel
+
+<h2>Tworzenie postaci — Inne szczegóły</h2>
+
+<div class="card p-3">
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Opis / Backstory</label>
+            <textarea name="Description" class="form-control" rows="6">@Model.Description</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Utwórz postać</button>
+    </form>
+</div>

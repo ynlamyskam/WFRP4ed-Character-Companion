@@ -26,10 +26,17 @@
     <form method="post" asp-page-handler="Choose">
 
         <select name="race" class="form-select">
-            @* @foreach (var r in Race.All)
+            @if (Model.Races.Any())
             {
-                <option value="@r">@r</option>
-            } *@
+                @foreach (var r in Model.Races)
+                {
+                    <option value="@r">@r</option>
+                }
+            }
+            else
+            {
+                <option>Brak ras w Content/races.json</option>
+            }
         </select>
 
         <button class="btn btn-primary mt-2">

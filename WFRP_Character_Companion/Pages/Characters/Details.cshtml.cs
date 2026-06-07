@@ -29,13 +29,13 @@ namespace WFRP_Character_Companion.Pages.Characters
                         .ThenInclude(t => t.TestEffects)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
+            if (Character == null)
+                return NotFound();
+
             AllSkills = await _db.Skills.ToListAsync();
 
             SkillLookup = Character.Skills.ToDictionary(x => x.SkillId);
             AttributeLookup = Character.Attributes.ToDictionary(x => x.Type);
-
-            if (Character == null)
-                return NotFound();
 
             return Page();
         }

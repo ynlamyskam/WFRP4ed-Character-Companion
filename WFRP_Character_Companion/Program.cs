@@ -5,6 +5,7 @@ using WFRP_Character_Companion.Data;
 using WFRP_Character_Companion.Models;
 using WFRP_Character_Companion.Models.Import;
 using WFRP_Character_Companion.Services;
+using WFRP_Character_Companion.Services.CharacterCreation;
 using WFRP_Character_Companion.Services.Content;
 
 namespace WFRP_Character_Companion
@@ -25,6 +26,8 @@ namespace WFRP_Character_Companion
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddRazorPages();
             builder.Services.AddScoped<TalentRulesService>();
+            builder.Services.AddScoped<CharacterDraftService>();
+            builder.Services.AddScoped<CreationContentService>();
             builder.Services.AddScoped<IContentImporter<Talent>>(sp =>
             {
                 var db = sp.GetRequiredService<ApplicationDbContext>();
@@ -110,6 +113,18 @@ namespace WFRP_Character_Companion
                 });
                 return new ContentImporter<OriginImportDto, Origin>(db, parser);
             });
+       
+            builder.Services.AddScoped<IContentImporter<Models.Profession>>(sp =>
+            {
+                var db = sp.GetRequiredService<ApplicationDbContext>();
+
+                var parser = new JsonContentParser<object, Models.Profession>(dto =>
+                {
+                    return null!; 
+                });
+
+                return new ContentImporter<object, Models.Profession>(db, parser);
+            });
 
             var app = builder.Build();
 
@@ -147,7 +162,7 @@ namespace WFRP_Character_Companion
                         combined.AddRange(list);
                 }
 
-                // dedupe by Race+Name to avoid duplicates across files
+
                 var deduped = combined
                     .GroupBy(o => (Race: o.Race ?? string.Empty, Name: o.Name ?? string.Empty))
                     .Select(g => g.First())

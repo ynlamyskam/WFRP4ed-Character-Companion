@@ -1,0 +1,213 @@
+[
+  {
+    "race": "Krasnolud",
+    "name": "Góry Krańca Świata",
+    "package": {
+      "skills": [
+        {
+          "skill": {
+            "name": "Mocna Głowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Opanowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Odporność"
+          }
+        },
+        {
+          "skill": {
+            "name": "Występy",
+            "specialization": "Gawędziarstwo"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wycena"
+          }
+        },
+        {
+          "skill": {
+            "name": "Język",
+            "specialization": "Khazalid"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Krasnoludy"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Geologia"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Biała",
+            "specialization": "Podstawowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Metalurgia"
+          }
+        },
+        {
+          "skill": {
+            "name": "Rzemiosło",
+            "specialization": "Dowolne"
+          }
+        },
+        {
+          "skill": {
+            "name": "Dowodzenie"
+          }
+        }
+      ],
+      "talents": [
+        {
+          "talent": {
+            "name": "Odporność na Magię"
+          }
+        },
+        {
+          "talent": {
+            "name": "Widzenie w Ciemności"
+          }
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Nieugięty" },
+            { "name": "Uraza Przodków" }
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Czytanie/pisanie" },
+            { "name": "Nieustępliwy" }
+          ]
+        },
+        {
+          "talent": {
+            "name": "Tragarz"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "race": "Krasnolud",
+    "name": "Księstwa Graniczne",
+    "package": {
+      "skills": [
+        {
+          "skill": {
+            "name": "Mocna Głowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Opanowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Odporność"
+          }
+        },
+        {
+          "skill": {
+            "name": "Występy",
+            "specialization": "Gawędziarstwo"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wycena"
+          }
+        },
+        {
+          "skill": {
+            "name": "Język",
+            "specialization": "Khazalid"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wiedza",
+            "specialization": "Krasnoludy"
+          }
+        },
+        {
+          "skill": {
+            "name": "Targowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Biała",
+            "specialization": "Podstawowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Nawigacja"
+          }
+        },
+        {
+          "skill": {
+            "name": "Żeglarstwo",
+            "specialization": "Dowolne"
+          }
+        },
+        {
+          "skill": {
+            "name": "Rzemiosło",
+            "specialization": "Dowolne"
+          }
+        }
+      ],
+      "talents": [
+        {
+          "talent": {
+            "name": "Odporność na Magię"
+          }
+        },
+        {
+          "talent": {
+            "name": "Widzenie w Ciemności"
+          }
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Żyłka Handlowa" },
+            { "name": "Odporność Psychiczna" }
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            { "name": "Czytanie/pisanie" },
+            { "name": "Nieugięty" }
+          ]
+        },
+        {
+          "talent": {
+            "name": "Tragarz"
+          }
+        }
+      ]
+    }
+  }
+]

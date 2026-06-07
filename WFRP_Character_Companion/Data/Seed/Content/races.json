@@ -4,41 +4,113 @@
     "movement": 4,
     "minFate": 2,
     "minResilience": 1,
-    "pointsToSpend": 3
+    "pointsToSpend": 3,
+    "Bases": {
+      "WeaponSkill": 20,
+      "BallisticSkill": 20,
+      "Strength": 20,
+      "Toughness": 20,
+      "Initiative": 20,
+      "Agility": 20,
+      "Dexterity": 20,
+      "Intelligence": 20,
+      "Willpower": 20,
+      "Fellowship": 20
+    }
   },
   {
     "name": "Krasnolud",
     "movement": 3,
     "minFate": 0,
     "minResilience": 2,
-    "pointsToSpend": 2
+    "pointsToSpend": 2,
+    "Bases": {
+      "WeaponSkill": 30,
+      "BallisticSkill": 20,
+      "Strength": 20,
+      "Toughness": 30,
+      "Initiative": 20,
+      "Agility": 10,
+      "Dexterity": 30,
+      "Intelligence": 20,
+      "Willpower": 40,
+      "Fellowship": 10
+    }
   },
   {
     "name": "Niziołek",
     "movement": 3,
     "minFate": 0,
     "minResilience": 2,
-    "pointsToSpend": 3
+    "pointsToSpend": 3,
+    "Bases": {
+      "WeaponSkill": 10,
+      "BallisticSkill": 30,
+      "Strength": 10,
+      "Toughness": 20,
+      "Initiative": 20,
+      "Agility": 20,
+      "Dexterity": 30,
+      "Intelligence": 20,
+      "Willpower": 30,
+      "Fellowship": 30
+    }
   },
   {
     "name": "Wysoki Elf",
     "movement": 5,
     "minFate": 0,
     "minResilience": 0,
-    "pointsToSpend": 2
+    "pointsToSpend": 2,
+    "Bases": {
+      "WeaponSkill": 30,
+      "BallisticSkill": 30,
+      "Strength": 20,
+      "Toughness": 20,
+      "Initiative": 40,
+      "Agility": 30,
+      "Dexterity": 30,
+      "Intelligence": 30,
+      "Willpower": 30,
+      "Fellowship": 20
+    }
   },
   {
     "name": "Leśny Elf",
     "movement": 5,
     "minFate": 0,
     "minResilience": 0,
-    "pointsToSpend": 2
+    "pointsToSpend": 2,
+    "Bases": {
+      "WeaponSkill": 30,
+      "BallisticSkill": 30,
+      "Strength": 20,
+      "Toughness": 20,
+      "Initiative": 40,
+      "Agility": 30,
+      "Dexterity": 30,
+      "Intelligence": 30,
+      "Willpower": 30,
+      "Fellowship": 20
+    }
   },
   {
     "name": "Gnom",
     "movement": 3,
     "minFate": 2,
     "minResilience": 0,
-    "pointsToSpend": 2
+    "pointsToSpend": 2,
+    "Bases": {
+      "WeaponSkill": 20,
+      "BallisticSkill": 10,
+      "Strength": 10,
+      "Toughness": 15,
+      "Initiative": 30,
+      "Agility": 30,
+      "Dexterity": 30,
+      "Intelligence": 30,
+      "Willpower": 40,
+      "Fellowship": 15
+    }
   }
 ]
