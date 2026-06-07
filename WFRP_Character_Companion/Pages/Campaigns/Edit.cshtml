@@ -1,0 +1,146 @@
+@page "{id:int}"
+
+@model WFRP_Character_Companion.Pages.Campaigns.EditModel
+
+@{
+
+    ViewData["Title"] = "Edycja kampanii";
+
+}
+
+
+
+<h2 class="mb-1">@Model.CampaignName</h2>
+
+<p class="text-muted mb-4">Zarządzanie kampanią (tylko twórca / MG)</p>
+
+
+
+<div class="row g-4">
+
+    <div class="col-lg-6">
+
+        <h4>Uczestnicy i postacie</h4>
+
+        @if (Model.CampaignView.Members.Count == 0)
+
+        {
+
+            <p class="text-muted">Brak uczestników.</p>
+
+        }
+
+        else
+
+        {
+
+            <ul>
+
+                @foreach (var member in Model.CampaignView.Members)
+
+                {
+
+                    <li class="mb-2">
+
+                        <span class="fw-medium">@member.DisplayName</span>
+
+                        @if (member.Characters.Count == 0)
+
+                        {
+
+                            <span class="text-muted">— brak postaci</span>
+
+                        }
+
+                        else
+
+                        {
+
+                            <ul>
+
+                                @foreach (var character in member.Characters)
+
+                                {
+
+                                    <li>
+
+                                        <a asp-page="/Characters/Details" asp-route-id="@character.CharacterId">
+
+                                            @character.Name
+
+                                        </a>
+
+                                    </li>
+
+                                }
+
+                            </ul>
+
+                        }
+
+                    </li>
+
+                }
+
+            </ul>
+
+        }
+
+    </div>
+
+
+
+    <div class="col-lg-6">
+
+        <h4>Dodaj użytkownika</h4>
+
+        <form method="post" asp-page-handler="AddMember" asp-route-id="@Model.CampaignId">
+
+            <div class="mb-2">
+
+                <input asp-for="AddMemberEmail" class="form-control" type="email" placeholder="Adres e-mail" />
+
+                <span asp-validation-for="AddMemberEmail" class="text-danger"></span>
+
+            </div>
+
+            <button type="submit" class="btn btn-outline-primary">Zaproś użytkownika</button>
+
+        </form>
+
+
+
+        <hr class="my-4" />
+
+
+
+        <h4>Twoje postacie</h4>
+
+        <p class="text-muted">Dodaj lub usuń własne postacie w kampanii.</p>
+
+        <a class="btn btn-primary" asp-page="/Campaigns/AddCharacter" asp-route-id="@Model.CampaignId">
+
+            Postacie
+
+        </a>
+
+    </div>
+
+</div>
+
+
+
+<hr class="my-4" />
+
+
+
+<a class="btn btn-outline-secondary" asp-page="/Campaigns/CampaignHub">Wróć do listy kampanii</a>
+
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}
+

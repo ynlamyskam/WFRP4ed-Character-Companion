@@ -5,10 +5,10 @@ namespace WFRP_Character_Companion.Models.Import
     public class TalentImportDto
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [JsonPropertyName("description")]
-        public string Description { get; set; }
+        public required string Description { get; set; }
 
         [JsonPropertyName("maxLevelType")]
         public TalentMaxLevelType MaxLevelType { get; set; } = TalentMaxLevelType.AttributeBonus;
