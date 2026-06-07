@@ -23,6 +23,17 @@ namespace WFRP_Character_Companion.Models
         public ICollection<CharacterTalent> Talents { get; set; }
             = [];
 
+        // Personal info
+        public int Age { get; set; }
+        public int Height { get; set; }
+        public int Weight { get; set; }
+        public string EyeColor { get; set; } = string.Empty;
+        public string HairColor { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+
+        // serialized items list
+        public string ItemsJson { get; set; } = "[]";
+
 
         public CharacterSkill? GetSkill(int skillId)
         {

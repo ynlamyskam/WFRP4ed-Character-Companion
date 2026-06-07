@@ -1,0 +1,108 @@
+[
+  {
+    "race": "Wysoki Elf",
+    "name": "Caledor",
+    "package": {
+      "skills": [
+        {
+          "skill": {
+            "name": "Wspinaczka"
+          }
+        },
+        {
+          "skill": {
+            "name": "Opanowanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Występy",
+            "specialization": "Śpiewanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Wycena"
+          }
+        },
+        {
+          "skill": {
+            "name": "Zastraszanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Język",
+            "specialization": "Eltharin"
+          }
+        },
+        {
+          "skill": {
+            "name": "Dowodzenie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Biała",
+            "specialization": "Podstawowa"
+          }
+        },
+        {
+          "skill": {
+            "name": "Nawigacja"
+          }
+        },
+        {
+          "skill": {
+            "name": "Percepcja"
+          }
+        },
+        {
+          "skill": {
+            "name": "Pływanie"
+          }
+        },
+        {
+          "skill": {
+            "name": "Broń Zasięgowa",
+            "specialization": "Łuk"
+          }
+        }
+      ],
+      "talents": [
+        {
+          "talent": {
+            "name": "Wyczulony Zmysł",
+            "specialization": "Wzrok"
+          }
+        },
+        {
+          "type": "Choice",
+          "options": [
+            {"name": "Wódz"},
+            {"name": "Nieugięty"}
+          ]
+        },
+        {
+          "type": "Choice",
+          "options": [
+            {
+              "name": "Percepcja Magiczna"
+            },
+            { "name": "Odporność Psychiczna" }
+          ]
+        },
+        {
+          "talent": {
+            "name": "Widzenie w Ciemności"
+          }
+        },
+        {
+          "talent": {
+            "name": "Czytanie/pisanie"
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,31 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreateEquipmentModel
+
+<h2>Tworzenie postaci — Ekwipunek</h2>
+
+<div class="card p-3">
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Dodaj przedmiot</label>
+            <input type="text" name="item" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Dodaj</button>
+        </div>
+    </form>
+
+    <hr />
+
+    <h5>Lista przedmiotów</h5>
+    <ul>
+        @foreach (var it in Model.Items)
+        {
+            <li>@it</li>
+        }
+    </ul>
+
+    <form method="post" asp-page-handler="Finish" class="mt-3">
+        <button class="btn btn-success">Dalej — inne szczegóły</button>
+    </form>
+</div>

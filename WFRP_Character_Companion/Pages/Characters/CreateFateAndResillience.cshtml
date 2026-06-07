@@ -1,0 +1,42 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreateFateAndResillienceModel
+
+<h2>Tworzenie postaci — Punkty Przeznaczenia i Punkty Bohatera</h2>
+
+<div class="card p-3">
+    <p class="text-muted">Rasa: <strong>@Model.RaceName</strong></p>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="alert alert-secondary mb-0">
+                <strong>Bazowe Punkty Przeznaczenia:</strong> @Model.FateBase
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="alert alert-secondary mb-0">
+                <strong>Bazowe Punkty Bohatera:</strong> @Model.ResilienceBase
+            </div>
+        </div>
+    </div>
+
+    <p>Rozdziel <strong>@Model.PointsToSpend</strong> dodatkowych punktów między Przeznaczenie i Bohaterstwo (suma musi wynosić @Model.PointsToSpend).</p>
+
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Dodatkowe Punkty Przeznaczenia</label>
+            <input type="number" name="FateBonus" class="form-control" min="0" max="@Model.PointsToSpend" value="@Model.FateBonus" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Dodatkowe Punkty Bohatera</label>
+            <input type="number" name="ResilienceBonus" class="form-control" min="0" max="@Model.PointsToSpend" value="@Model.ResilienceBonus" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Motywacja (tekst)</label>
+            <input type="text" name="Motivation" class="form-control" value="@Model.Motivation" />
+        </div>
+
+        <button class="btn btn-primary">Zatwierdź</button>
+    </form>
+</div>

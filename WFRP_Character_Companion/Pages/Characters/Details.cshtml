@@ -31,11 +31,14 @@
 
         <!-- Basic Info -->
         <div class="tab-pane fade show active" id="bio">
-            <p><b>Wiek:</b> </p>
-            <p><b>Wzrost:</b> </p>
-            <p><b>Waga:</b> </p>
-            <p><b>Kolor oczu:</b> </p>
-            <p><b>Kolor włosów:</b> </p>
+            <p><b>Wiek:</b> @Model.Character.Age</p>
+            <p><b>Wzrost:</b> @Model.Character.Height</p>
+            <p><b>Waga:</b> @Model.Character.Weight</p>
+            <p><b>Kolor oczu:</b> @Model.Character.EyeColor</p>
+            <p><b>Kolor włosów:</b> @Model.Character.HairColor</p>
+            <hr />
+            <h5>Opis</h5>
+            <p>@Model.Character.Description</p>
         </div>
 
         <!-- Stats -->
@@ -128,7 +131,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach (var skill in Model.AllSkills.Where(s => s.IsAdvanced))
+                    @foreach (var skill in Model.AllSkills.Where(s => s.IsAdvanced && Model.SkillLookup.ContainsKey(s.Id) && Model.SkillLookup[s.Id].Advances > 0))
                     {
                         Model.SkillLookup.TryGetValue(skill.Id, out var charSkill);
 
@@ -206,7 +209,23 @@
 
         <!-- Equipment -->
         <div class="tab-pane fade" id="gear">
-            <p>Tu będzie ekwipunek</p>
+            <h5>Przedmioty</h5>
+            <ul>
+                @{
+                    try
+                    {
+                        var items = System.Text.Json.JsonSerializer.Deserialize<List<string>>(Model.Character.ItemsJson) ?? new List<string>();
+                        foreach (var it in items)
+                        {
+                            <li>@it</li>
+                        }
+                    }
+                    catch
+                    {
+                        <li class="text-muted">Brak</li>
+                    }
+                }
+            </ul>
         </div>
 
     </div>

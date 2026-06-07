@@ -1,0 +1,94 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreateRaceSkillsAndTalentsModel
+
+<h2>Tworzenie postaci — Talenty i Umiejętności z Pochodzenia</h2>
+
+<div class="card p-3">
+    <h4>Talenty z pochodzenia (@Model.OriginName)</h4>
+
+    @if (Model.FixedTalents.Any())
+    {
+        <div>
+            <h5>Stałe talenty</h5>
+            <ul>
+                @foreach (var t in Model.FixedTalents)
+                {
+                    <li>@t</li>
+                }
+            </ul>
+        </div>
+    }
+
+    @if (Model.ChoiceTalentGroups.Any())
+    {
+        <div>
+            <h5>Wybierz talenty</h5>
+            <form method="post">
+                @for (int i = 0; i < Model.ChoiceTalentGroups.Count; i++)
+                {
+                    <div class="mb-2">
+                        <label class="form-label">Wybór @(@i+1)</label>
+                        <select name="talent_choice_@i" class="form-select">
+                            @foreach (var opt in Model.ChoiceTalentGroups[i])
+                            {
+                                <option value="@opt">@opt</option>
+                            }
+                        </select>
+                    </div>
+                }
+
+                @if (Model.RandomTalents.Any())
+                {
+                    <div>
+                        <h5>Losowe talenty</h5>
+                        <ul>
+                            @foreach (var t in Model.RandomTalents)
+                            {
+                                <li>@t</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <hr />
+
+                <h5>Umiejętności z pochodzenia</h5>
+                <p>Możesz przypisać do 3 umiejętności po +3 punkty oraz do 3 innych po +5 punktów (maksymalnie 6 umiejętności).</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>+3 (do 3)</h6>
+                        @for (int i = 0; i < 3; i++)
+                        {
+                            <select name="skill_plus3_@i" class="form-select mb-2">
+                                <option value="">— brak —</option>
+                                @foreach (var s in Model.OriginSkills)
+                                {
+                                    <option value="@s">@s</option>
+                                }
+                            </select>
+                        }
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6>+5 (do 3)</h6>
+                        @for (int i = 0; i < 3; i++)
+                        {
+                            <select name="skill_plus5_@i" class="form-select mb-2">
+                                <option value="">— brak —</option>
+                                @foreach (var s in Model.OriginSkills)
+                                {
+                                    <option value="@s">@s</option>
+                                }
+                            </select>
+                        }
+                    </div>
+                </div>
+
+                <hr />
+
+                <button class="btn btn-primary">Zatwierdź pochodzenie</button>
+            </form>
+        </div>
+    }
+</div>

@@ -62,3 +62,6 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 /WFRP_Character_Companion/wwwroot/avatars/*
+
+#Git conflict resolution temp files
+*.orig

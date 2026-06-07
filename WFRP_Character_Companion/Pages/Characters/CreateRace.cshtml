@@ -1,0 +1,48 @@
+﻿@page
+@using WFRP_Character_Companion.Models
+@model WFRP_Character_Companion.Pages.Characters.CreateRaceModel
+
+<h2>Tworzenie postaci — Rasa</h2>
+
+<div class="card p-3">
+
+    <h4>Wylosowana rasa:</h4>
+
+    <div class="alert alert-info">
+        <strong>@Model.RolledRace</strong>
+    </div>
+
+    <form method="post" asp-page-handler="Accept">
+        <input type="hidden" name="race" value="@Model.RolledRace" />
+        <button class="btn btn-success">
+            Akceptuję (+20 XP)
+        </button>
+    </form>
+
+    <hr />
+
+    <h5>Albo wybierz ręcznie:</h5>
+
+    <form method="post" asp-page-handler="Choose">
+
+        <select name="race" class="form-select">
+            @if (Model.Races.Any())
+            {
+                @foreach (var r in Model.Races)
+                {
+                    <option value="@r">@r</option>
+                }
+            }
+            else
+            {
+                <option>Brak ras w Content/races.json</option>
+            }
+        </select>
+
+        <button class="btn btn-primary mt-2">
+            Dalej (bez bonusu XP)
+        </button>
+
+    </form>
+
+</div>
