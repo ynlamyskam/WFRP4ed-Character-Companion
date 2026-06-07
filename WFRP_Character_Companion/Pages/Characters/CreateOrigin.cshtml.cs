@@ -15,29 +15,76 @@ namespace WFRP_Character_Companion.Pages.Characters
         private readonly IWebHostEnvironment _env = env;
 
         public CharacterDraft Draft { get; set; } = default!;
-        public Origin RolledOrigin { get; set; } = new();
+        public Origin? RolledOrigin { get; set; }
         public List<Origin> AllOrigins { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync()
         {
             Draft = await GetOrCreateDraft();
 
-            // Load origins from file
-            var path = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "origins.json");
-            if (System.IO.File.Exists(path))
+            // Load origins from Data/Seed/Content/origins*.json or Content/origins*.json
+            var contentDir1 = Path.Combine(_env.ContentRootPath, "Content");
+            var contentDir2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content");
+            var originFiles = new List<string>();
+            if (Directory.Exists(contentDir1))
+                originFiles.AddRange(Directory.GetFiles(contentDir1, "origins*.json", SearchOption.TopDirectoryOnly));
+            if (Directory.Exists(contentDir2))
+                originFiles.AddRange(Directory.GetFiles(contentDir2, "origins*.json", SearchOption.TopDirectoryOnly));
+
+            var combined = new List<Origin>();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            options.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            foreach (var f in originFiles.OrderBy(f => f))
             {
-                var json = await System.IO.File.ReadAllTextAsync(path);
-                AllOrigins = JsonSerializer.Deserialize<List<Origin>>(json) ?? new();
+                var json = await System.IO.File.ReadAllTextAsync(f);
+                var list = JsonSerializer.Deserialize<List<Origin>>(json, options);
+                if (list != null)
+                    combined.AddRange(list);
             }
 
-            // Filter by draft.Race when available
-            var pool = string.IsNullOrEmpty(Draft.Race) ? AllOrigins : AllOrigins.Where(o => o.Race == Draft.Race).ToList();
-            if (pool.Any())
-                RolledOrigin = pool[Random.Shared.Next(pool.Count)];
-            else if (AllOrigins.Any())
-                RolledOrigin = AllOrigins[Random.Shared.Next(AllOrigins.Count)];
+            AllOrigins = combined;
+
+            // Filter by draft.Race when available (match by race name)
+            var matching = new List<Origin>();
+            if (string.IsNullOrEmpty(Draft.Race))
+            {
+                matching = AllOrigins;
+            }
+            else
+            {
+                string normDraft = Normalize(Draft.Race);
+                matching = AllOrigins.Where(o => !string.IsNullOrEmpty(o.Race) && Normalize(o.Race) == normDraft).ToList();
+                if (!matching.Any())
+                {
+                    // try contains match
+                    matching = AllOrigins.Where(o => !string.IsNullOrEmpty(o.Race) && Normalize(o.Race).Contains(normDraft)).ToList();
+                }
+            }
+
+            if (matching.Any())
+            {
+                RolledOrigin = matching[Random.Shared.Next(matching.Count)];
+            }
+            else
+            {
+                RolledOrigin = null;
+            }
 
             return Page();
+        }
+
+        private static string Normalize(string? s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+            var form = s.Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+            foreach (var ch in form)
+            {
+                var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(System.Text.NormalizationForm.FormC).ToLowerInvariant().Replace(" ", "");
         }
 
         public async Task<IActionResult> OnPostAcceptAsync(string originName)

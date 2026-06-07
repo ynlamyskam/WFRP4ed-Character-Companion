@@ -26,12 +26,14 @@ namespace WFRP_Character_Companion.Pages.Characters
             var draft = await GetOrCreateDraft();
             var race = draft.Race ?? "Human";
             var raceBases = await LoadRaceBases();
-            var rb = raceBases.FirstOrDefault(r => string.Equals(r.Name, race, StringComparison.OrdinalIgnoreCase)) ?? new RaceBase();
-
-            FateBase = rb.FateBase;
-            FateToAssign = rb.FateToAssign;
-            HeroBase = rb.HeroBase;
-            HeroToAssign = rb.HeroToAssign;
+            var rb = raceBases.FirstOrDefault(r => string.Equals(r.Name, race, StringComparison.OrdinalIgnoreCase));
+            if (rb != null)
+            {
+                FateBase = rb.FateBase > 0 ? rb.FateBase : rb.MinFate;
+                FateToAssign = rb.FateToAssign;
+                HeroBase = rb.HeroBase > 0 ? rb.HeroBase : rb.MinResilience;
+                HeroToAssign = rb.HeroToAssign > 0 ? rb.HeroToAssign : rb.PointsToSpend;
+            }
 
             var state = JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson) ?? new Dictionary<string, object>();
             if (state.TryGetValue("Fate", out var f))
@@ -73,15 +75,21 @@ namespace WFRP_Character_Companion.Pages.Characters
             return RedirectToPage("CreateRaceSkillsAndTalents");
         }
 
-        private async Task<List<RaceBase>> LoadRaceBases()
+        private async Task<List<Race>> LoadRaceBases()
         {
-            var path = Path.Combine(_env.ContentRootPath, "Content", "races.json");
-            if (!System.IO.File.Exists(path))
-                return new List<RaceBase>();
+            var path1 = Path.Combine(_env.ContentRootPath, "Content", "races.json");
+            var path2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "races.json");
+            string? txt = null;
+            if (System.IO.File.Exists(path1))
+                txt = await System.IO.File.ReadAllTextAsync(path1);
+            else if (System.IO.File.Exists(path2))
+                txt = await System.IO.File.ReadAllTextAsync(path2);
 
-            var txt = await System.IO.File.ReadAllTextAsync(path);
+            if (string.IsNullOrEmpty(txt))
+                return new List<Race>();
+
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            return JsonSerializer.Deserialize<List<RaceBase>>(txt, options) ?? new List<RaceBase>();
+            return JsonSerializer.Deserialize<List<Race>>(txt, options) ?? new List<Race>();
         }
 
         private async Task<CharacterDraft> GetOrCreateDraft()

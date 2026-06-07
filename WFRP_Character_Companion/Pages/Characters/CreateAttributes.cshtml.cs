@@ -30,7 +30,7 @@ namespace WFRP_Character_Companion.Pages.Characters
             var race = draft.Race ?? "Human";
             var rb = raceBases.FirstOrDefault(r => string.Equals(r.Name, race, StringComparison.OrdinalIgnoreCase));
             if (rb == null)
-                rb = new RaceBase { Name = "Human", Bases = AttributeOrder.ToDictionary(a => a, a => 20) };
+                rb = new Race { Name = "Human", Bases = AttributeOrder.ToDictionary(a => a, a => 20) };
 
             
             Rolls = Enumerable.Range(0, AttributeOrder.Count).Select(_ => Roll2k10()).ToList();
@@ -40,6 +40,7 @@ namespace WFRP_Character_Companion.Pages.Characters
             {
                 Bases[a] = rb.Bases.ContainsKey(a) ? rb.Bases[a] : 20;
             }
+
             TempData["Bases"] = JsonSerializer.Serialize(Bases);
 
             if (advance)
@@ -48,22 +49,21 @@ namespace WFRP_Character_Companion.Pages.Characters
                 Stage = "advance";
                 // load profession Tier1 attributes
                 var professions = await LoadAllProfessions();
-                var prof = professions.FirstOrDefault(p => string.Equals(p.Name, draft.Race, StringComparison.OrdinalIgnoreCase));
-                // profession name stored in draft.StateJson
                 var professionName = GetProfessionFromDraft(draft);
+                Profession? prof = null;
                 if (!string.IsNullOrEmpty(professionName))
                 {
-                    prof = professions.FirstOrDefault(p => string.Equals(p.Name, professionName, StringComparison.OrdinalIgnoreCase));
+                    var norm = Normalize(professionName);
+                    prof = professions.FirstOrDefault(p => !string.IsNullOrEmpty(p.Name) && Normalize(p.Name) == norm);
                 }
 
-                if (prof != null && prof.Tiers != null && prof.Tiers.Count > 0)
+                if (prof == null)
                 {
-                    AdvanceAttributes = prof.Tiers[0].Attributes;
+                    // fallback: try to match by draft.Race if profession not found
+                    prof = professions.FirstOrDefault(p => string.Equals(p.Name, draft.Race, StringComparison.OrdinalIgnoreCase));
                 }
-                else
-                {
-                    AdvanceAttributes = new List<string>();
-                }
+
+                AdvanceAttributes = (prof != null && prof.Tiers != null && prof.Tiers.Count > 0) ? (prof.Tiers[0].Attributes ?? new List<string>()) : new List<string>();
             }
             else
             {
@@ -118,7 +118,7 @@ namespace WFRP_Character_Companion.Pages.Characters
             var race = draft.Race ?? "Human";
             var rb = raceBases.FirstOrDefault(r => string.Equals(r.Name, race, StringComparison.OrdinalIgnoreCase));
             if (rb == null)
-                rb = new RaceBase { Name = "Human", Bases = AttributeOrder.ToDictionary(a => a, a => 20) };
+                rb = new Race { Name = "Human", Bases = AttributeOrder.ToDictionary(a => a, a => 20) };
             foreach (var a in AttributeOrder)
                 Bases[a] = rb.Bases.ContainsKey(a) ? rb.Bases[a] : 20;
             TempData["Bases"] = JsonSerializer.Serialize(Bases);
@@ -143,6 +143,17 @@ namespace WFRP_Character_Companion.Pages.Characters
                         assigned.Add(rolls[idx]);
                 }
             }
+
+            // validate that same roll isn't assigned multiple times by checking indices uniqueness
+            var assignedIndices = new List<int>();
+            for (int i = 0; i < AttributeOrder.Count; i++)
+            {
+                var key = $"rollIndex_{i}";
+                if (Request.Form.ContainsKey(key) && int.TryParse(Request.Form[key], out var idx))
+                    assignedIndices.Add(idx);
+            }
+            if (assignedIndices.Count != assignedIndices.Distinct().Count())
+                return BadRequest("Każdy rzut może być przypisany tylko do jednej cechy.");
 
            
             var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
@@ -184,7 +195,7 @@ namespace WFRP_Character_Companion.Pages.Characters
             var race = draft.Race ?? "Human";
             var rb = raceBases.FirstOrDefault(r => string.Equals(r.Name, race, StringComparison.OrdinalIgnoreCase));
             if (rb == null)
-                rb = new RaceBase { Name = "Human", Bases = AttributeOrder.ToDictionary(a => a, a => 20) };
+                rb = new Race { Name = "Human", Bases = AttributeOrder.ToDictionary(a => a, a => 20) };
             foreach (var a in AttributeOrder)
                 Bases[a] = rb.Bases.ContainsKey(a) ? rb.Bases[a] : 20;
             Stage = "manual";
@@ -291,8 +302,11 @@ namespace WFRP_Character_Companion.Pages.Characters
 
         private async Task<List<Profession>> LoadAllProfessions()
         {
-            var dir = Path.Combine(_env.ContentRootPath, "Content", "Professions");
-            var files = Directory.Exists(dir) ? Directory.GetFiles(dir, "*.json") : Array.Empty<string>();
+            var dir1 = Path.Combine(_env.ContentRootPath, "Content", "Professions");
+            var dir2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "Professions");
+            var files = new List<string>();
+            if (Directory.Exists(dir1)) files.AddRange(Directory.GetFiles(dir1, "*.json"));
+            if (Directory.Exists(dir2)) files.AddRange(Directory.GetFiles(dir2, "*.json"));
             var list = new List<Profession>();
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             foreach (var f in files)
@@ -310,15 +324,21 @@ namespace WFRP_Character_Companion.Pages.Characters
             return Random.Shared.Next(1, 11) + Random.Shared.Next(1, 11);
         }
 
-        private async Task<List<RaceBase>> LoadRaceBases()
+        private async Task<List<Race>> LoadRaceBases()
         {
-            var path = Path.Combine(_env.ContentRootPath, "Content", "races.json");
-            if (!System.IO.File.Exists(path))
-                return new List<RaceBase>();
+            var path1 = Path.Combine(_env.ContentRootPath, "Content", "races.json");
+            var path2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "races.json");
+            string? txt = null;
+            if (System.IO.File.Exists(path1))
+                txt = await System.IO.File.ReadAllTextAsync(path1);
+            else if (System.IO.File.Exists(path2))
+                txt = await System.IO.File.ReadAllTextAsync(path2);
 
-            var txt = await System.IO.File.ReadAllTextAsync(path);
+            if (string.IsNullOrEmpty(txt))
+                return new List<Race>();
+
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            return JsonSerializer.Deserialize<List<RaceBase>>(txt, options) ?? new List<RaceBase>();
+            return JsonSerializer.Deserialize<List<Race>>(txt, options) ?? new List<Race>();
         }
 
         private async Task<CharacterDraft> GetOrCreateDraft()
@@ -331,6 +351,20 @@ namespace WFRP_Character_Companion.Pages.Characters
             _db.CharacterDrafts.Add(draft);
             await _db.SaveChangesAsync();
             return draft;
+        }
+
+        private static string Normalize(string? s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+            var form = s.Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+            foreach (var ch in form)
+            {
+                var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(System.Text.NormalizationForm.FormC).ToLowerInvariant().Replace(" ", "");
         }
     }
 }

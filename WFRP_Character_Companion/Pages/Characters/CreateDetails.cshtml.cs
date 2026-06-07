@@ -50,6 +50,14 @@ namespace WFRP_Character_Companion.Pages.Characters
                 Talents = new List<CharacterTalent>()
             };
 
+            // personal info
+            if (state.TryGetValue("Age", out var age)) character.Age = Convert.ToInt32(age);
+            if (state.TryGetValue("Height", out var h)) character.Height = Convert.ToInt32(h);
+            if (state.TryGetValue("Weight", out var w)) character.Weight = Convert.ToInt32(w);
+            if (state.TryGetValue("EyeColor", out var ec)) character.EyeColor = ec?.ToString() ?? string.Empty;
+            if (state.TryGetValue("HairColor", out var hc)) character.HairColor = hc?.ToString() ?? string.Empty;
+            if (state.TryGetValue("Description", out var descState)) character.Description = descState?.ToString() ?? string.Empty;
+
             // apply skill advances from state keys Advance_<SkillName>
             var skills = await _db.Skills.ToListAsync();
             foreach (var key in JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson)!.Keys)
@@ -86,6 +94,12 @@ namespace WFRP_Character_Companion.Pages.Characters
                 {
                     character.Talents.Add(new CharacterTalent { TalentId = t.Id, Level = 1 });
                 }
+            }
+
+            // items
+            if (state.TryGetValue("Items", out var itemsObj))
+            {
+                try { character.ItemsJson = JsonSerializer.Serialize(JsonSerializer.Deserialize<List<string>>(itemsObj.ToString() ?? "[]") ?? new()); } catch { }
             }
 
             _db.Characters.Add(character);

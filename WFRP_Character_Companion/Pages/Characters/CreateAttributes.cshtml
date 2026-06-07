@@ -118,3 +118,22 @@
     }
 
 </div>
+
+@section Scripts {
+    <script>
+        (function(){
+            const selects = document.querySelectorAll('select[name^="rollIndex_"]');
+            function updateOptions() {
+                const chosen = Array.from(selects).map(s => s.value);
+                selects.forEach(s => {
+                    Array.from(s.options).forEach(opt => {
+                        if (chosen.includes(opt.value) && s.value !== opt.value) opt.disabled = true;
+                        else opt.disabled = false;
+                    });
+                });
+            }
+            selects.forEach(s => s.addEventListener('change', updateOptions));
+            updateOptions();
+        })();
+    </script>
+}

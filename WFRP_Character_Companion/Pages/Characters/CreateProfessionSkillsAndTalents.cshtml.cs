@@ -24,7 +24,8 @@ namespace WFRP_Character_Companion.Pages.Characters
             if (!string.IsNullOrEmpty(professionName))
             {
                 var professions = await LoadAllProfessions();
-                var prof = professions.FirstOrDefault(p => string.Equals(p.Name, professionName, StringComparison.OrdinalIgnoreCase));
+                var norm = Normalize(professionName);
+                var prof = professions.FirstOrDefault(p => !string.IsNullOrEmpty(p.Name) && Normalize(p.Name) == norm);
                 if (prof != null && prof.Tiers != null && prof.Tiers.Count > 0)
                 {
                     var tier1 = prof.Tiers[0];
@@ -77,7 +78,9 @@ namespace WFRP_Character_Companion.Pages.Characters
             {
                 var state = JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson) ?? new Dictionary<string, object>();
                 if (state.TryGetValue("Profession", out var p))
+                {
                     return p?.ToString();
+                }
             }
             catch { }
             return null;
@@ -85,8 +88,11 @@ namespace WFRP_Character_Companion.Pages.Characters
 
         private async Task<List<Profession>> LoadAllProfessions()
         {
-            var dir = Path.Combine(_env.ContentRootPath, "Content", "Professions");
-            var files = Directory.Exists(dir) ? Directory.GetFiles(dir, "*.json") : Array.Empty<string>();
+            var dir1 = Path.Combine(_env.ContentRootPath, "Content", "Professions");
+            var dir2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "Professions");
+            var files = new List<string>();
+            if (Directory.Exists(dir1)) files.AddRange(Directory.GetFiles(dir1, "*.json"));
+            if (Directory.Exists(dir2)) files.AddRange(Directory.GetFiles(dir2, "*.json"));
             var list = new List<Profession>();
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             foreach (var f in files)
@@ -97,6 +103,20 @@ namespace WFRP_Character_Companion.Pages.Characters
                     list.AddRange(pList);
             }
             return list;
+        }
+
+        private static string Normalize(string? s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+            var form = s.Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+            foreach (var ch in form)
+            {
+                var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(System.Text.NormalizationForm.FormC).ToLowerInvariant().Replace(" ", "");
         }
 
         private async Task<CharacterDraft> GetOrCreateDraft()

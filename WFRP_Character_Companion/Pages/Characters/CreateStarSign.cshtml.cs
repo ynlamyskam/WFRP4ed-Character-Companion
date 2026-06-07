@@ -53,11 +53,12 @@ namespace WFRP_Character_Companion.Pages.Characters
 
         private async Task<List<StarSign>> LoadStarSigns()
         {
-            var path = Path.Combine(_env.ContentRootPath, "Content", "StarSigns.json");
-            if (!System.IO.File.Exists(path))
-                return new List<StarSign>();
-
-            var txt = await System.IO.File.ReadAllTextAsync(path);
+            var path1 = Path.Combine(_env.ContentRootPath, "Content", "StarSigns.json");
+            var path2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "StarSigns.json");
+            string? txt = null;
+            if (System.IO.File.Exists(path1)) txt = await System.IO.File.ReadAllTextAsync(path1);
+            else if (System.IO.File.Exists(path2)) txt = await System.IO.File.ReadAllTextAsync(path2);
+            if (string.IsNullOrEmpty(txt)) return new List<StarSign>();
             var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             return JsonSerializer.Deserialize<List<StarSign>>(txt, opts) ?? new List<StarSign>();
         }

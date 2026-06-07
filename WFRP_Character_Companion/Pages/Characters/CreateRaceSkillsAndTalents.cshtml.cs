@@ -27,13 +27,21 @@ namespace WFRP_Character_Companion.Pages.Characters
             var originName = draft.Origin ?? string.Empty;
             OriginName = originName;
 
-            // load origins from seed content
-            var path = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "origins.json");
-            List<Origin> all = new();
-            if (System.IO.File.Exists(path))
+            // load origins from Content or Data/Seed/Content origins*.json
+            var contentDir1 = Path.Combine(_env.ContentRootPath, "Content");
+            var contentDir2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content");
+            var originFiles = new List<string>();
+            if (Directory.Exists(contentDir1)) originFiles.AddRange(Directory.GetFiles(contentDir1, "origins*.json"));
+            if (Directory.Exists(contentDir2)) originFiles.AddRange(Directory.GetFiles(contentDir2, "origins*.json"));
+
+            var all = new List<Origin>();
+            var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            opts.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            foreach (var f in originFiles.OrderBy(f => f))
             {
-                var txt = await System.IO.File.ReadAllTextAsync(path);
-                all = JsonSerializer.Deserialize<List<Origin>>(txt) ?? new();
+                var txt = await System.IO.File.ReadAllTextAsync(f);
+                var list = JsonSerializer.Deserialize<List<Origin>>(txt, opts);
+                if (list != null) all.AddRange(list);
             }
 
             var origin = all.FirstOrDefault(o => o.Name == originName);
@@ -48,13 +56,16 @@ namespace WFRP_Character_Companion.Pages.Characters
                         ChoiceTalentGroups.Add(t.Options.Select(o => o.Name).ToList());
                     else if (t.Type == TalentGrantType.Random)
                     {
-                        // load RandomTalents.json
-                        var rpath = Path.Combine(_env.ContentRootPath, "Content", "RandomTalents.json");
-                        if (System.IO.File.Exists(rpath))
-                        {
-                            var rtxt = await System.IO.File.ReadAllTextAsync(rpath);
-                            RandomTalents = JsonSerializer.Deserialize<List<string>>(rtxt) ?? new();
-                        }
+                        // load RandomTalents.json (full pool) and pick required count
+                        var rpath1 = Path.Combine(_env.ContentRootPath, "Content", "RandomTalents.json");
+                        var rpath2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "RandomTalents.json");
+                        string? rtxt = null;
+                        if (System.IO.File.Exists(rpath1)) rtxt = await System.IO.File.ReadAllTextAsync(rpath1);
+                        else if (System.IO.File.Exists(rpath2)) rtxt = await System.IO.File.ReadAllTextAsync(rpath2);
+                        var pool = !string.IsNullOrEmpty(rtxt) ? JsonSerializer.Deserialize<List<string>>(rtxt) ?? new() : new List<string>();
+                        var count = t.Count > 0 ? t.Count : 1;
+                        var picks = pool.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
+                        RandomTalents.AddRange(picks);
                     }
                 }
 

@@ -47,15 +47,35 @@ namespace WFRP_Character_Companion.Pages.Characters
             return RedirectToPage("CreateAttributes");
         }
 
-        public async Task<IActionResult> OnPostGeneratePoolAsync(string current)
+        public async Task<IActionResult> OnPostGeneratePoolAsync(string current, int eligibleXp)
         {
             var professions = await LoadAllProfessions();
             var pool = new List<Profession>();
-            var currentP = professions.FirstOrDefault(p => p.Name == current) ?? professions[Random.Shared.Next(professions.Count)];
-            pool.Add(currentP);
-            var others = professions.Where(p => p.Name != currentP.Name).OrderBy(_ => Random.Shared.Next()).Take(2);
-            pool.AddRange(others);
-            Pool = pool;
+            // If eligibleXp is 0 (this was a reroll without XP), do not provide a selectable pool
+            if (eligibleXp == 0)
+            {
+                // just reroll single profession without pool
+                Rolled = professions.Count > 0 ? professions[Random.Shared.Next(professions.Count)] : null;
+                EligibleXp = 0;
+                Pool = new();
+                return Page();
+            }
+
+            var currentP = professions.FirstOrDefault(p => p.Name == current) ?? (professions.Count > 0 ? professions[Random.Shared.Next(professions.Count)] : null);
+            if (currentP != null) pool.Add(currentP);
+
+            var others = professions.Where(p => currentP == null || p.Name != currentP.Name)
+                                    .OrderBy(_ => Random.Shared.Next())
+                                    .ToList();
+
+            foreach (var o in others)
+            {
+                if (pool.Count >= 3) break;
+                if (pool.All(p => p.Name != o.Name)) pool.Add(o);
+            }
+
+            // ensure pool size at most 3 and distinct
+            Pool = pool.GroupBy(p => p.Name).Select(g => g.First()).Take(3).ToList();
             EligibleXp = 25;
             return Page();
         }
@@ -90,8 +110,11 @@ namespace WFRP_Character_Companion.Pages.Characters
 
         private async Task<List<Profession>> LoadAllProfessions()
         {
-            var dir = Path.Combine(_env.ContentRootPath, "Content", "Professions");
-            var files = Directory.Exists(dir) ? Directory.GetFiles(dir, "*.json") : Array.Empty<string>();
+            var dir1 = Path.Combine(_env.ContentRootPath, "Content", "Professions");
+            var dir2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "Professions");
+            var files = new List<string>();
+            if (Directory.Exists(dir1)) files.AddRange(Directory.GetFiles(dir1, "*.json"));
+            if (Directory.Exists(dir2)) files.AddRange(Directory.GetFiles(dir2, "*.json"));
             var list = new List<Profession>();
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             foreach (var f in files)

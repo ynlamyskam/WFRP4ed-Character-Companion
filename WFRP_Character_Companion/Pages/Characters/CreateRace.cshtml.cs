@@ -7,20 +7,51 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WFRP_Character_Companion.Pages.Characters
 {
-    public class CreateRaceModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager) : PageModel
+    public class CreateRaceModel : PageModel
     {
-        private readonly ApplicationDbContext _db = db;
-
+        private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IWebHostEnvironment _env;
+
+        public CreateRaceModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
+        {
+            _db = db;
+            _userManager = userManager;
+            _env = env;
+        }
 
         public CharacterDraft Draft { get; set; } = default!;
-        public string RolledRace { get; set; } = default!;
+        public string RolledRace { get; set; } = string.Empty;
+        public List<string> Races { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync()
         {
             Draft = await GetOrCreateDraft();
 
-            //RolledRace = RollRace();
+            // load races from Content/races.json
+            var path1 = Path.Combine(_env.ContentRootPath, "Content", "races.json");
+            var path2 = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "races.json");
+            string? txt = null;
+            if (System.IO.File.Exists(path1))
+                txt = await System.IO.File.ReadAllTextAsync(path1);
+            else if (System.IO.File.Exists(path2))
+                txt = await System.IO.File.ReadAllTextAsync(path2);
+
+            if (!string.IsNullOrEmpty(txt))
+            {
+                try
+                {
+                    var list = System.Text.Json.JsonSerializer.Deserialize<List<Race>>(txt, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+                    Races = list.Select(r => r.Name).Where(n => !string.IsNullOrEmpty(n)).ToList();
+                }
+                catch
+                {
+                    Races = new();
+                }
+            }
+
+            if (Races.Any())
+                RolledRace = Races[Random.Shared.Next(Races.Count)];
 
             return Page();
         }
