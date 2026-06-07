@@ -1,0 +1,36 @@
+[
+  {
+    "Class": "Łotry",
+    "Name": "Gladiator",
+    "Tiers": [
+      {
+        "Name": "Pięściarz",
+        "Status": "Brąz 4",
+        "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
+        "Skills": [ "Atletyka", "Hazard", "Unik" ],
+        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+      },
+      {
+        "Name": "Gladiator",
+        "Status": "Srebro 2",
+        "Attributes": [ "Initiative" ],
+        "Skills": [ "Tragowanie", "Intuicja", "Percepcja" ],
+        "Talents": [ "Dwie Bronie", "Oburęczność" ]
+      },
+      {
+        "Name": "Mistrz Areny",
+        "Status": "Srebro 5",
+        "Attributes": [ "Agility" ],
+        "Skills": [ "Plotkowanie" ],
+        "Talents": [ "Groźny" ]
+      },
+      {
+        "Name": "Legenda Areny",
+        "Status": "Złoto 2",
+        "Attributes": [ "Fellowship" ],
+        "Skills": [ "Charyzma" ],
+        "Talents": [ "Straszny" ]
+      }
+    ]
+  }
+]

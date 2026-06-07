@@ -1,0 +1,54 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreateProfessionModel
+
+<h2>Tworzenie postaci — Profesja</h2>
+
+<div class="card p-3">
+
+    @if (Model.Pool != null && Model.Pool.Any())
+    {
+        <h4>Wybierz jedną z trzech profesji</h4>
+        <div class="list-group">
+            @foreach (var p in Model.Pool)
+            {
+                <div class="list-group-item">
+                    <h5>@p.Name (@p.Class)</h5>
+                    <p>Tier 1 status: @p.Tiers.FirstOrDefault()?.Status</p>
+                    <form method="post" asp-page-handler="ChooseFromPool">
+                        <input type="hidden" name="chosen" value="@p.Name" />
+                        <button class="btn btn-primary">Wybierz tę profesję (+25 PD)</button>
+                    </form>
+                </div>
+            }
+        </div>
+
+        <hr />
+
+        <form method="post" asp-page-handler="Reroll">
+            <button class="btn btn-secondary">Rzuć ponownie (bez PD)</button>
+        </form>
+    }
+    else
+    {
+        <h4>Wylosowana profesja:</h4>
+
+        <div class="alert alert-info">
+            <strong>@Model.Rolled?.Name</strong> (@Model.Rolled?.Class)
+        </div>
+
+        <h5>Tier 1</h5>
+        <p>Status: @Model.Rolled?.Tiers?.FirstOrDefault()?.Status</p>
+
+        <form method="post" asp-page-handler="Accept">
+            <input type="hidden" name="chosen" value="@Model.Rolled?.Name" />
+            <input type="hidden" name="eligibleXp" value="@Model.EligibleXp" />
+            <button class="btn btn-success">Akceptuję (+@Model.EligibleXp PD)</button>
+        </form>
+
+        <form method="post" asp-page-handler="GeneratePool" class="mt-2">
+            <input type="hidden" name="current" value="@Model.Rolled?.Name" />
+            <button class="btn btn-primary">Odrzucam — pokaż 2 dodatkowe (możesz wybrać spośród 3)</button>
+        </form>
+    }
+
+</div>

@@ -110,6 +110,18 @@ namespace WFRP_Character_Companion
                 });
                 return new ContentImporter<OriginImportDto, Origin>(db, parser);
             });
+       
+            builder.Services.AddScoped<IContentImporter<Models.Profession>>(sp =>
+            {
+                var db = sp.GetRequiredService<ApplicationDbContext>();
+
+                var parser = new JsonContentParser<object, Models.Profession>(dto =>
+                {
+                    return null!; 
+                });
+
+                return new ContentImporter<object, Models.Profession>(db, parser);
+            });
 
             var app = builder.Build();
 
