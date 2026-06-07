@@ -1,0 +1,120 @@
+@page
+@model WFRP_Character_Companion.Pages.Characters.CreateAttributesModel
+
+<h2>Tworzenie postaci — Cechy</h2>
+
+<div class="card p-3">
+    @if (Model.Stage == "roll")
+    {
+        <p>Wylosowano zestaw 2k10 dla każdej cechy.</p>
+        <table class="table">
+            <thead>
+                <tr><th>Cecha</th><th>Baza</th><th>Rzut (2k10)</th><th>Wynik</th></tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.AttributeOrder.Count; i++)
+                {
+                    var t = Model.AttributeOrder[i];
+                    <tr>
+                        <td>@t</td>
+                        <td>@Model.Bases[t]</td>
+                        <td>@Model.Rolls[i]</td>
+                        <td>@(Model.Bases[t] + Model.Rolls[i])</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <form method="post" asp-page-handler="AcceptRoll">
+            <button class="btn btn-success">Akceptuję (+50 PD)</button>
+        </form>
+
+        <form method="post" asp-page-handler="Rearrange">
+            <button class="btn btn-primary">Przestaw wartości 2k10 między cechami (+25 PD jeśli zaakceptujesz potem)</button>
+        </form>
+
+        <form method="post" asp-page-handler="ManualAllocate">
+            <button class="btn btn-secondary">Ręczne rozdanie 100 punktów (bez PD)</button>
+        </form>
+    }
+    else if (Model.Stage == "rearrange")
+    {
+        <p>Przestaw dostępne roll'e między cechami (bazy pozostają)</p>
+        <form method="post" asp-page-handler="AcceptRearrange">
+            <table class="table">
+                <thead><tr><th>Cecha</th><th>Roll (2k10)</th></tr></thead>
+                <tbody>
+                    @for (int i = 0; i < Model.AttributeOrder.Count; i++)
+                    {
+                        var t = Model.AttributeOrder[i];
+                        <tr>
+                            <td>@t</td>
+                            <td>
+                                <select name="rollIndex_@i" class="form-select">
+                                    @for (int j = 0; j < Model.Rolls.Count; j++)
+                                    {
+                                        <option value="@j">@Model.Rolls[j]</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <button class="btn btn-success">Zatwierdź przestawienia (+25 PD)</button>
+        </form>
+
+        <form method="post" asp-page-handler="CancelRearrange" class="mt-2">
+            <button class="btn btn-secondary">Anuluj i wróć do losowania</button>
+        </form>
+    }
+    else if (Model.Stage == "manual")
+    {
+        <p>Rozdziel 100 punktów między cechy (min 4, max 18 dla każdej) — bazy pozostają</p>
+        <form method="post" asp-page-handler="AcceptManual">
+            <table class="table">
+                <thead><tr><th>Cecha</th><th>Wartość</th></tr></thead>
+                <tbody>
+                    @for (int i = 0; i < Model.AttributeOrder.Count; i++)
+                    {
+                        var t = Model.AttributeOrder[i];
+                        <tr>
+                            <td>@t</td>
+                            <td><input type="number" name="manual_@i" class="form-control" min="4" max="18" value="10" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button class="btn btn-success">Zatwierdź ręczne rozdanie</button>
+        </form>
+    }
+
+    <hr />
+
+    @if (Model.Stage == "advance")
+    {
+        <h4>Rozdziel 5 punktów rozwinięć między cechy z Tier1 Twojej profesji</h4>
+        <form method="post" asp-page-handler="AcceptAdvances">
+            <table class="table">
+                <thead><tr><th>Cecha</th><th>Przydziel</th></tr></thead>
+                <tbody>
+                    @for (int i = 0; i < Model.AdvanceAttributes.Count; i++)
+                    {
+                        var a = Model.AdvanceAttributes[i];
+                        <tr>
+                            <td>@a</td>
+                            <td><input type="number" name="advance_@i" class="form-control" min="0" max="5" value="0" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button class="btn btn-success">Zatwierdź rozwinięcia (dokładnie 5 punktów)</button>
+        </form>
+    }
+    else
+    {
+        <h5>Po wybraniu bazowych wartości możesz rozdzielić 5 punktów między cechy wymienione w Tier1 Twojej profesji jako rozwinięcia.</h5>
+    }
+
+</div>

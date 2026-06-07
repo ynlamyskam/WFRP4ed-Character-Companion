@@ -158,7 +158,7 @@ namespace WFRP_Character_Companion
                         combined.AddRange(list);
                 }
 
-                // dedupe by Race+Name to avoid duplicates across files
+
                 var deduped = combined
                     .GroupBy(o => (Race: o.Race ?? string.Empty, Name: o.Name ?? string.Empty))
                     .Select(g => g.First())
