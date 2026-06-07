@@ -3,124 +3,99 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WFRP_Character_Companion.Data;
 using WFRP_Character_Companion.Models;
+using WFRP_Character_Companion.Services.CharacterCreation;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace WFRP_Character_Companion.Pages.Characters
 {
-    public class CreateDetailsModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager) : PageModel
+    public class CreateDetailsModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager, CharacterDraftService draftService) : PageModel
     {
         private readonly ApplicationDbContext _db = db;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly CharacterDraftService _draftService = draftService;
 
         public string Description { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var draft = await GetOrCreateDraft();
-            var state = JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson) ?? new Dictionary<string, object>();
-            if (state.TryGetValue("Description", out var d))
-                Description = d?.ToString() ?? string.Empty;
+            var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
+            var draft = await _draftService.GetOrCreateActiveDraftAsync(user.Id);
+            var state = DraftStateHelper.Parse(draft.StateJson);
+            Description = DraftStateHelper.GetString(state, "Description");
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var draft = await GetOrCreateDraft();
-            var state = JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson) ?? new Dictionary<string, object>();
+            var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
+            var draft = await _draftService.GetOrCreateActiveDraftAsync(user.Id);
+            var state = DraftStateHelper.Parse(draft.StateJson);
 
             var desc = Request.Form.ContainsKey("Description") ? Request.Form["Description"].ToString() ?? string.Empty : string.Empty;
-            state["Description"] = desc;
+            DraftStateHelper.SetValue(state, "Description", desc);
+            draft.StateJson = DraftStateHelper.Serialize(state);
 
-            draft.StateJson = JsonSerializer.Serialize(state);
+            var attributeNames = Enum.GetNames<AttributeType>().ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var skills = await _db.Skills.ToListAsync();
+            var skillNames = skills.Select(s => s.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            // finalize - create Character from draft
-            var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
             var character = new Character
             {
-                Name = state.ContainsKey("Name") ? state["Name"].ToString() ?? "" : "New Character",
+                Name = DraftStateHelper.GetString(state, "Name", "Nowa postać"),
                 UserId = user.Id,
                 Attributes = Enum.GetValues<AttributeType>().Select(a => new CharacterAttribute
                 {
                     Type = a,
-                    Basic = state.ContainsKey($"Attr_{a}") ? Convert.ToInt32(state[$"Attr_{a}"]) : 0,
-                    Advance = state.ContainsKey($"Advance_{a}") ? Convert.ToInt32(state[$"Advance_{a}"]) : 0
+                    Basic = DraftStateHelper.GetInt(state, $"Attr_{a}"),
+                    Advance = DraftStateHelper.GetInt(state, $"Advance_{a}")
                 }).ToList(),
-                Skills = new List<CharacterSkill>(),
-                Talents = new List<CharacterTalent>()
+                Skills = [],
+                Talents = []
             };
 
-            // personal info
-            if (state.TryGetValue("Age", out var age)) character.Age = Convert.ToInt32(age);
-            if (state.TryGetValue("Height", out var h)) character.Height = Convert.ToInt32(h);
-            if (state.TryGetValue("Weight", out var w)) character.Weight = Convert.ToInt32(w);
-            if (state.TryGetValue("EyeColor", out var ec)) character.EyeColor = ec?.ToString() ?? string.Empty;
-            if (state.TryGetValue("HairColor", out var hc)) character.HairColor = hc?.ToString() ?? string.Empty;
-            if (state.TryGetValue("Description", out var descState)) character.Description = descState?.ToString() ?? string.Empty;
+            character.Age = DraftStateHelper.GetInt(state, "Age");
+            character.Height = DraftStateHelper.GetInt(state, "Height");
+            character.Weight = DraftStateHelper.GetInt(state, "Weight");
+            character.EyeColor = DraftStateHelper.GetString(state, "EyeColor");
+            character.HairColor = DraftStateHelper.GetString(state, "HairColor");
+            character.Description = desc;
 
-            // apply skill advances from state keys Advance_<SkillName>
-            var skills = await _db.Skills.ToListAsync();
-            foreach (var key in JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson)!.Keys)
+            foreach (var key in state.Keys.Where(k => k.StartsWith("Advance_")))
             {
-                if (key.StartsWith("Advance_"))
-                {
-                    var skillName = key.Substring("Advance_".Length);
-                    var val = Convert.ToInt32(JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson)![key]);
-                    var skill = skills.FirstOrDefault(s => s.Name == skillName);
-                    if (skill != null)
-                    {
-                        character.Skills.Add(new CharacterSkill { SkillId = skill.Id, Advances = val });
-                    }
-                }
+                var name = key["Advance_".Length..];
+                if (attributeNames.Contains(name))
+                    continue;
+                if (!skillNames.Contains(name))
+                    continue;
+
+                var val = DraftStateHelper.GetInt(state, key);
+                var skill = skills.First(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase));
+                character.Skills.Add(new CharacterSkill { SkillId = skill.Id, Advances = val });
             }
 
-            // apply talents from OriginTalents and ProfessionTier1Talent etc.
-            var talentNames = new List<string>();
-            if (state.TryGetValue("OriginTalents", out var ot))
-            {
-                try { talentNames.AddRange(JsonSerializer.Deserialize<List<string>>(ot.ToString() ?? "[]") ?? new()); } catch { }
-            }
-            if (state.TryGetValue("ProfessionTier1Talent", out var pt))
-            {
-                if (!string.IsNullOrEmpty(pt?.ToString()))
-                    talentNames.Add(pt.ToString()!);
-            }
+            var talentNames = DraftStateHelper.GetStringList(state, "OriginTalents");
+            var professionTalent = DraftStateHelper.GetString(state, "ProfessionTier1Talent");
+            if (!string.IsNullOrEmpty(professionTalent))
+                talentNames.Add(professionTalent);
 
             var talents = await _db.Talents.ToListAsync();
-            foreach (var tn in talentNames.Distinct())
+            foreach (var tn in talentNames.Distinct(StringComparer.OrdinalIgnoreCase))
             {
-                var t = talents.FirstOrDefault(x => x.Name == tn);
+                var t = talents.FirstOrDefault(x => string.Equals(x.Name, tn, StringComparison.OrdinalIgnoreCase));
                 if (t != null)
-                {
                     character.Talents.Add(new CharacterTalent { TalentId = t.Id, Level = 1 });
-                }
             }
 
-            // items
-            if (state.TryGetValue("Items", out var itemsObj))
-            {
-                try { character.ItemsJson = JsonSerializer.Serialize(JsonSerializer.Deserialize<List<string>>(itemsObj.ToString() ?? "[]") ?? new()); } catch { }
-            }
+            var items = DraftStateHelper.GetStringList(state, "Items");
+            if (items.Count > 0)
+                character.ItemsJson = JsonSerializer.Serialize(items);
 
             _db.Characters.Add(character);
-            // remove draft
             _db.CharacterDrafts.Remove(draft);
-
             await _db.SaveChangesAsync();
 
-            return RedirectToPage("/Characters/CharacterHub");
-        }
-
-        private async Task<CharacterDraft> GetOrCreateDraft()
-        {
-            var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
-            var draft = await _db.CharacterDrafts.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Step == CharacterCreationStep.Details);
-            if (draft != null)
-                return draft;
-            draft = new CharacterDraft { UserId = user.Id, Step = CharacterCreationStep.Details, Experience = 0 };
-            _db.CharacterDrafts.Add(draft);
-            await _db.SaveChangesAsync();
-            return draft;
+            return RedirectToPage("/Characters/Details", new { id = character.Id });
         }
     }
 }

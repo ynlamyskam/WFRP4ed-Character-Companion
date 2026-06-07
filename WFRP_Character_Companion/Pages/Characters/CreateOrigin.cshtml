@@ -6,7 +6,6 @@
     <div class="card p-3">
         <h4>Wylosowane pochodzenie:</h4>
         <p class="text-muted">Wybrana rasa: @Model.Draft.Race</p>
-        <p class="small text-muted">Draft.StateJson: @Model.DebugDraftJson</p>
     @if (Model.RolledOrigin != null)
     {
         <div class="alert alert-info"><strong>@Model.RolledOrigin.Name</strong> (@Model.RolledOrigin.Race)</div>
@@ -17,8 +16,8 @@
     }
 
         <form method="post" asp-page-handler="Accept">
-            <input type="hidden" name="originName" value="@Model.RolledOrigin.Name" />
-            <button class="btn btn-success">Akceptuję (+10 XP)</button>
+            <input type="hidden" name="originName" value="@Model.RolledOrigin?.Name" />
+            <button class="btn btn-success" @(Model.RolledOrigin == null ? "disabled" : null)>Akceptuję (+10 XP)</button>
         </form>
 
         <hr />

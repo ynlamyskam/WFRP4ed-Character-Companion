@@ -94,23 +94,35 @@
 
     @if (Model.Stage == "advance")
     {
-        <h4>Rozdziel 5 punktów rozwinięć między cechy z Tier1 Twojej profesji</h4>
-        <form method="post" asp-page-handler="AcceptAdvances">
-            <table class="table">
-                <thead><tr><th>Cecha</th><th>Przydziel</th></tr></thead>
-                <tbody>
-                    @for (int i = 0; i < Model.AdvanceAttributes.Count; i++)
-                    {
-                        var a = Model.AdvanceAttributes[i];
-                        <tr>
-                            <td>@a</td>
-                            <td><input type="number" name="advance_@i" class="form-control" min="0" max="5" value="0" /></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <button class="btn btn-success">Zatwierdź rozwinięcia (dokładnie 5 punktów)</button>
-        </form>
+        @if (Model.AdvanceAttributes.Any())
+        {
+            <h4>Rozdziel 5 punktów rozwinięć między cechy z Tier1 Twojej profesji</h4>
+            <form method="post" asp-page-handler="AcceptAdvances">
+                <table class="table">
+                    <thead><tr><th>Cecha</th><th>Przydziel</th></tr></thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.AdvanceAttributes.Count; i++)
+                        {
+                            var a = Model.AdvanceAttributes[i];
+                            <tr>
+                                <td>@a</td>
+                                <td><input type="number" name="advance_@i" class="form-control" min="0" max="5" value="0" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button class="btn btn-success">Zatwierdź rozwinięcia (dokładnie 5 punktów)</button>
+            </form>
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                Nie znaleziono cech Tier 1 dla wybranej profesji. Możesz przejść dalej.
+            </div>
+            <form method="post" asp-page-handler="AcceptAdvances">
+                <button class="btn btn-success">Kontynuuj bez rozwinięć</button>
+            </form>
+        }
     }
     else
     {

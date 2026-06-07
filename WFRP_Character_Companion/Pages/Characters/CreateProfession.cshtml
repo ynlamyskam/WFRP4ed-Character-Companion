@@ -1,4 +1,5 @@
 @page
+@using WFRP_Character_Companion.Services.CharacterCreation
 @model WFRP_Character_Companion.Pages.Characters.CreateProfessionModel
 
 <h2>Tworzenie postaci — Profesja</h2>
@@ -7,7 +8,7 @@
 
     @if (Model.Pool != null && Model.Pool.Any())
     {
-        <h4>Wybierz jedną z trzech profesji</h4>
+        <h4>Wybierz jedną z @Model.Pool.Count profesji</h4>
         <div class="list-group">
             @foreach (var p in Model.Pool)
             {
@@ -15,7 +16,7 @@
                     <h5>@p.Name (@p.Class)</h5>
                     <p>Tier 1 status: @p.Tiers.FirstOrDefault()?.Status</p>
                     <form method="post" asp-page-handler="ChooseFromPool">
-                        <input type="hidden" name="chosen" value="@p.Name" />
+                        <input type="hidden" name="chosen" value="@CreationContentService.ToKey(p)" />
                         <button class="btn btn-primary">Wybierz tę profesję (+25 PD)</button>
                     </form>
                 </div>
@@ -39,24 +40,25 @@
         <h5>Tier 1</h5>
         <p>Status: @Model.Rolled?.Tiers?.FirstOrDefault()?.Status</p>
 
-        <form method="post" asp-page-handler="Accept">
-            <input type="hidden" name="chosen" value="@Model.Rolled?.Name" />
+        <form method="post" asp-page-handler="Accept" class="mb-2">
+            <input type="hidden" name="chosen" value="@(Model.Rolled != null ? CreationContentService.ToKey(Model.Rolled) : "")" />
             <input type="hidden" name="eligibleXp" value="@Model.EligibleXp" />
             <button class="btn btn-success">Akceptuję (+@Model.EligibleXp PD)</button>
         </form>
 
-        <form method="post" asp-page-handler="GeneratePool" class="mt-2">
-            <input type="hidden" name="current" value="@Model.Rolled?.Name" />
-            <input type="hidden" name="eligibleXp" value="@Model.EligibleXp" />
-            @if (Model.EligibleXp == 0)
-            {
+        @if (Model.EligibleXp == 0)
+        {
+            <form method="post" asp-page-handler="Reroll">
                 <button class="btn btn-primary">Rzuć inną losową profesję</button>
-            }
-            else
-            {
+            </form>
+        }
+        else
+        {
+            <form method="post" asp-page-handler="GeneratePool">
+                <input type="hidden" name="current" value="@(Model.Rolled != null ? CreationContentService.ToKey(Model.Rolled) : "")" />
                 <button class="btn btn-primary">Odrzucam — pokaż 2 dodatkowe (możesz wybrać spośród 3)</button>
-            }
-        </form>
+            </form>
+        }
     }
 
 </div>

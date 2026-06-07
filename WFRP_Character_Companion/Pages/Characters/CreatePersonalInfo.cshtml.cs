@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WFRP_Character_Companion.Data;
 using WFRP_Character_Companion.Models;
-using Microsoft.EntityFrameworkCore;
+using WFRP_Character_Companion.Services.CharacterCreation;
 using System.Text.Json;
 
 namespace WFRP_Character_Companion.Pages.Characters
 {
-    public class CreatePersonalInfoModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager) : PageModel
+    public class CreatePersonalInfoModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager, CharacterDraftService draftService) : PageModel
     {
         private readonly ApplicationDbContext _db = db;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly CharacterDraftService _draftService = draftService;
 
         [BindProperty]
         public PersonalInfoInput Input { get; set; } = new();
@@ -20,7 +21,8 @@ namespace WFRP_Character_Companion.Pages.Characters
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Draft = await GetOrCreateDraft();
+            var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
+            Draft = await _draftService.GetOrCreateActiveDraftAsync(user.Id);
             return Page();
         }
 
@@ -30,14 +32,8 @@ namespace WFRP_Character_Companion.Pages.Characters
             if (user == null)
                 return Unauthorized();
 
-            var draft = await _db.CharacterDrafts.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Step == CharacterCreationStep.PersonalInfo);
-            if (draft == null)
-            {
-                draft = new CharacterDraft { UserId = user.Id, Step = CharacterCreationStep.PersonalInfo, Experience = 0 };
-                _db.CharacterDrafts.Add(draft);
-            }
+            var draft = await _draftService.GetOrCreateActiveDraftAsync(user.Id);
 
-            // Save personal info into state json
             var state = JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson) ?? new Dictionary<string, object>();
             state["Name"] = Input.Name ?? string.Empty;
             state["Age"] = Input.Age;
@@ -54,23 +50,11 @@ namespace WFRP_Character_Companion.Pages.Characters
 
             return RedirectToPage("CreateProfession");
         }
-
-        private async Task<CharacterDraft> GetOrCreateDraft()
-        {
-            var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
-            var draft = await _db.CharacterDrafts.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Step == CharacterCreationStep.PersonalInfo);
-            if (draft != null)
-                return draft;
-            draft = new CharacterDraft { UserId = user.Id, Step = CharacterCreationStep.PersonalInfo, Experience = 0 };
-            _db.CharacterDrafts.Add(draft);
-            await _db.SaveChangesAsync();
-            return draft;
-        }
     }
 
     public class PersonalInfoInput
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int Age { get; set; }
         public int Height { get; set; }
         public int Weight { get; set; }

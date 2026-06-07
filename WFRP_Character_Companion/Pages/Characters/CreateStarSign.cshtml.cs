@@ -3,16 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WFRP_Character_Companion.Data;
 using WFRP_Character_Companion.Models;
-using Microsoft.EntityFrameworkCore;
+using WFRP_Character_Companion.Services.CharacterCreation;
 using System.Text.Json;
 
 namespace WFRP_Character_Companion.Pages.Characters
 {
-    public class CreateStarSignModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IWebHostEnvironment env) : PageModel
+    public class CreateStarSignModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IWebHostEnvironment env, CharacterDraftService draftService) : PageModel
     {
         private readonly ApplicationDbContext _db = db;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IWebHostEnvironment _env = env;
+        private readonly CharacterDraftService _draftService = draftService;
 
         public StarSign? Rolled { get; set; }
 
@@ -27,12 +28,7 @@ namespace WFRP_Character_Companion.Pages.Characters
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User) ?? throw new InvalidOperationException();
-            var draft = await _db.CharacterDrafts.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Step == CharacterCreationStep.StarSign);
-            if (draft == null)
-            {
-                draft = new CharacterDraft { UserId = user.Id, Step = CharacterCreationStep.StarSign, Experience = 0 };
-                _db.CharacterDrafts.Add(draft);
-            }
+            var draft = await _draftService.GetOrCreateActiveDraftAsync(user.Id);
 
             var signs = await LoadStarSigns();
             string chosen = string.Empty;
@@ -40,7 +36,7 @@ namespace WFRP_Character_Companion.Pages.Characters
                 chosen = Request.Form["chosenSign"].ToString() ?? string.Empty;
 
             var selected = signs.FirstOrDefault(s => string.Equals(s.Name, chosen, StringComparison.OrdinalIgnoreCase))
-                        ?? (signs.Any() ? signs[Random.Shared.Next(signs.Count)] : null);
+                        ?? (signs.Count > 0 ? signs[Random.Shared.Next(signs.Count)] : null);
 
             var state = JsonSerializer.Deserialize<Dictionary<string, object>>(draft.StateJson) ?? new Dictionary<string, object>();
             state["StarSign"] = selected?.Name ?? string.Empty;
@@ -58,9 +54,9 @@ namespace WFRP_Character_Companion.Pages.Characters
             string? txt = null;
             if (System.IO.File.Exists(path1)) txt = await System.IO.File.ReadAllTextAsync(path1);
             else if (System.IO.File.Exists(path2)) txt = await System.IO.File.ReadAllTextAsync(path2);
-            if (string.IsNullOrEmpty(txt)) return new List<StarSign>();
+            if (string.IsNullOrEmpty(txt)) return [];
             var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            return JsonSerializer.Deserialize<List<StarSign>>(txt, opts) ?? new List<StarSign>();
+            return JsonSerializer.Deserialize<List<StarSign>>(txt, opts) ?? [];
         }
     }
 }

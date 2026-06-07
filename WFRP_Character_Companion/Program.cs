@@ -5,6 +5,7 @@ using WFRP_Character_Companion.Data;
 using WFRP_Character_Companion.Models;
 using WFRP_Character_Companion.Models.Import;
 using WFRP_Character_Companion.Services;
+using WFRP_Character_Companion.Services.CharacterCreation;
 using WFRP_Character_Companion.Services.Content;
 
 namespace WFRP_Character_Companion
@@ -25,6 +26,8 @@ namespace WFRP_Character_Companion
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddRazorPages();
             builder.Services.AddScoped<TalentRulesService>();
+            builder.Services.AddScoped<CharacterDraftService>();
+            builder.Services.AddScoped<CreationContentService>();
             builder.Services.AddScoped<IContentImporter<Talent>>(sp =>
             {
                 var db = sp.GetRequiredService<ApplicationDbContext>();
