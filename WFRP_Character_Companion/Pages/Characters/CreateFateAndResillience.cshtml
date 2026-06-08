@@ -23,9 +23,9 @@
     </div>
 
     <p class="mb-2 text-stone-400">Rozdziel <strong class="text-amber-400">@Model.PointsToSpend</strong> dodatkowych punktów.</p>
-    <p class="mb-4 text-sm text-stone-500">Suma: <span data-live-sum data-target="@Model.PointsToSpend" data-sum-selector="[name='FateBonus'], [name='ResilienceBonus']" class="font-mono font-bold">@(Model.FateBonus + Model.ResilienceBonus)</span> / @Model.PointsToSpend</p>
 
     <form method="post" data-validate="fate-pool" data-pool="@Model.PointsToSpend" class="space-y-4">
+        <p class="mb-2 text-sm text-stone-500">Suma: <span data-live-sum data-target="@Model.PointsToSpend" data-sum-selector="[name='FateBonus'], [name='ResilienceBonus']" class="font-mono font-bold">@(Model.FateBonus + Model.ResilienceBonus)</span> / @Model.PointsToSpend</p>
         <div>
             <label class="mb-1 block text-sm text-stone-400">Dodatkowe Punkty Przeznaczenia</label>
             <input type="number" name="FateBonus" min="0" max="@Model.PointsToSpend" value="@Model.FateBonus"

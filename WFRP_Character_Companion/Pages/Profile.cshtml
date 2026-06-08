@@ -7,39 +7,47 @@
     var appUser = await UserManager.GetUserAsync(User);
 }
 
-<h1 class="font-display mb-6 text-2xl font-bold text-amber-500 sm:text-3xl">Profil użytkownika</h1>
+<h1 class="font-display mb-2 text-2xl font-bold text-amber-500 sm:text-3xl">Profil użytkownika</h1>
+<p class="mb-6 text-sm text-stone-400">Zarządzaj swoim kontem i awatarem.</p>
 
 <div class="grid gap-6 lg:grid-cols-2">
     <div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-stone-500">Ustawienia</h2>
         <form method="post" enctype="multipart/form-data" class="space-y-5">
             <div>
-                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.DisplayName">Nazwa wyświetlana</label>
-                <input asp-for="Input.DisplayName"
-                       class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
+                <label class="field-label" asp-for="Input.DisplayName">Nazwa wyświetlana</label>
+                <input asp-for="Input.DisplayName" class="field-input" placeholder="Jak masz być widoczny w aplikacji" />
             </div>
             <div>
-                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.AvatarFile">Awatar</label>
-                <input asp-for="Input.AvatarFile" type="file" accept=".png,.jpg,.jpeg"
-                       class="w-full text-sm text-stone-400 file:mr-4 file:rounded-lg file:border-0 file:bg-stone-700 file:px-4 file:py-2 file:text-stone-200" />
+                <label class="field-label">E-mail</label>
+                <input type="email" value="@appUser?.Email" disabled class="field-input" />
+                <p class="mt-1 text-xs text-stone-500">Adres e-mail nie może być tu zmieniony.</p>
+            </div>
+            <div>
+                <label class="field-label" asp-for="Input.AvatarFile">Awatar</label>
+                <input asp-for="Input.AvatarFile" type="file" accept=".png,.jpg,.jpeg" class="file-input" />
             </div>
             <button type="submit" class="rounded-lg bg-emerald-800 px-5 py-2.5 font-medium text-white transition hover:bg-emerald-700">
-                Zapisz
+                Zapisz zmiany
             </button>
         </form>
     </div>
 
     <div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
         <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-stone-500">Podgląd</h2>
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
             @if (appUser?.AvatarFileName != null)
             {
-                <img src="/avatars/@appUser.AvatarFileName" alt="" class="h-20 w-20 rounded-full object-cover ring-2 ring-stone-700" />
+                <img src="/avatars/@appUser.AvatarFileName" alt="" class="h-24 w-24 rounded-full object-cover ring-2 ring-amber-800/50" />
             }
             else
             {
-                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-stone-800 text-2xl text-stone-500">?</div>
+                <div class="flex h-24 w-24 items-center justify-center rounded-full bg-stone-800 text-3xl text-stone-500 ring-2 ring-stone-700">?</div>
             }
-            <p class="font-display text-xl text-stone-100">@(string.IsNullOrWhiteSpace(Model.Input.DisplayName) ? "Gracz" : Model.Input.DisplayName)</p>
+            <div>
+                <p class="font-display text-xl text-stone-100">@(string.IsNullOrWhiteSpace(Model.Input.DisplayName) ? "Gracz" : Model.Input.DisplayName)</p>
+                <p class="mt-1 text-sm text-stone-500">@appUser?.Email</p>
+            </div>
         </div>
     </div>
 </div>

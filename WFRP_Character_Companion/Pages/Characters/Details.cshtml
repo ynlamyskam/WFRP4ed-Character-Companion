@@ -1,29 +1,46 @@
 ﻿@page
 @using WFRP_Character_Companion.Helpers
-@using WFRP_Character_Companion.Services
+@using WFRP_Character_Companion.Models
 @model WFRP_Character_Companion.Pages.Characters.DetailsModel
 @{
     ViewData["Title"] = Model.Character.Name;
     ViewData["WideLayout"] = true;
 
     var orderedAttrs = Model.Character.Attributes.OrderBy(a => a.Type).ToList();
+    var attrLookup = orderedAttrs.ToDictionary(a => a.Type);
     var basicSkills = Model.AllSkills.Where(s => !s.IsAdvanced).ToList();
-    var advancedSkills = Model.AllSkills
-        .Where(s => s.IsAdvanced && Model.SkillLookup.ContainsKey(s.Id) && Model.SkillLookup[s.Id].Advances > 0)
+    var trainedAdvanced = Model.Character.Skills
+        .Where(cs => cs.Skill?.IsAdvanced == true && cs.Advances > 0)
+        .OrderBy(cs => cs.DisplayName, StringComparer.CurrentCultureIgnoreCase)
+        .ToList();
+    var orderedTalents = Model.Character.Talents
+        .OrderBy(t => t.DisplayName, StringComparer.CurrentCultureIgnoreCase)
         .ToList();
     var items = new List<string>();
-    try
-    {
-        items = System.Text.Json.JsonSerializer.Deserialize<List<string>>(Model.Character.ItemsJson) ?? [];
-    }
+    try { items = System.Text.Json.JsonSerializer.Deserialize<List<string>>(Model.Character.ItemsJson) ?? []; }
     catch { }
 }
 
-<div class="mb-6">
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
     <a asp-page="/Characters/CharacterHub" class="text-sm text-stone-500 transition hover:text-amber-400">&larr; Wróć do listy postaci</a>
+    @if (Model.IsOwner)
+    {
+        <div class="flex gap-2">
+            <a asp-page="/Characters/Edit" asp-route-id="@Model.Character.Id"
+               class="rounded-lg border border-stone-600 px-3 py-1.5 text-sm text-stone-300 transition hover:border-amber-700 hover:text-amber-400">
+                Edytuj
+            </a>
+            <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Character.Id"
+                  onsubmit="return confirm('Na pewno usunąć tę postać? Tej operacji nie można cofnąć.');">
+                <button type="submit" class="rounded-lg border border-red-900/60 px-3 py-1.5 text-sm text-red-400 transition hover:bg-red-950/50">
+                    Usuń
+                </button>
+            </form>
+        </div>
+    }
 </div>
 
-<header class="mb-8">
+<header class="mb-6">
     <h1 class="font-display text-3xl font-bold text-amber-500 sm:text-4xl">@Model.Character.Name</h1>
     @if (Model.Character.Age > 0 || Model.Character.Height > 0)
     {
@@ -35,102 +52,95 @@
     }
 </header>
 
+<div class="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="rounded-lg border border-stone-700 bg-stone-900/60 px-4 py-3">
+        <p class="text-xs uppercase tracking-wide text-stone-500">Maks. żywotność</p>
+        <p class="font-display text-2xl font-bold text-amber-400">@Model.MaxWounds</p>
+    </div>
+    <div class="rounded-lg border border-stone-700 bg-stone-900/60 px-4 py-3">
+        <p class="text-xs uppercase tracking-wide text-stone-500">Punkty doświadczenia</p>
+        <p class="font-display text-xl font-bold text-emerald-400">@Model.Character.AvailableExperience</p>
+        <p class="mt-1 text-xs text-stone-500">zdobyte @Model.Character.ExperienceEarned · wydane @Model.Character.ExperienceSpent</p>
+    </div>
+    <div class="rounded-lg border border-stone-700 bg-stone-900/60 px-4 py-3">
+        <p class="text-xs uppercase tracking-wide text-stone-500">Punkty zepsucia</p>
+        <p class="font-display text-xl font-bold text-purple-400">@Model.Character.CorruptionPoints / @Model.MaxCorruption</p>
+        <p class="mt-1 text-xs text-stone-500">maks. (Bonus SW + Bonus Wt)</p>
+    </div>
+</div>
+
 <div class="rounded-xl border border-stone-700 bg-stone-900/80 shadow-xl" data-tabs data-tabs-default="bio">
 
     <div class="flex overflow-x-auto border-b border-stone-700" role="tablist">
         <button type="button" data-tab-target="bio" role="tab"
-                class="shrink-0 border-b-2 border-amber-500 px-5 py-3 text-sm font-medium text-amber-400 transition hover:text-amber-300">
-            Opis
-        </button>
+                class="shrink-0 border-b-2 border-amber-500 px-5 py-3 text-sm font-medium text-amber-400">Opis</button>
         <button type="button" data-tab-target="stats" role="tab"
-                class="shrink-0 border-b-2 border-transparent px-5 py-3 text-sm font-medium text-stone-400 transition hover:text-stone-200">
-            Statystyki
-        </button>
+                class="shrink-0 border-b-2 border-transparent px-5 py-3 text-sm font-medium text-stone-400">Statystyki</button>
         <button type="button" data-tab-target="gear" role="tab"
-                class="shrink-0 border-b-2 border-transparent px-5 py-3 text-sm font-medium text-stone-400 transition hover:text-stone-200">
-            Ekwipunek
-        </button>
+                class="shrink-0 border-b-2 border-transparent px-5 py-3 text-sm font-medium text-stone-400">Ekwipunek</button>
     </div>
 
-    <!-- Opis -->
     <div data-tab-panel="bio" class="p-6">
         <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @if (Model.Character.Age > 0)
             {
                 <div class="rounded-lg border border-stone-700 bg-stone-800/40 px-4 py-3">
-                    <dt class="text-xs uppercase tracking-wide text-stone-500">Wiek</dt>
+                    <dt class="text-xs uppercase text-stone-500">Wiek</dt>
                     <dd class="mt-1 text-lg text-stone-100">@Model.Character.Age</dd>
-                </div>
-            }
-            @if (Model.Character.Height > 0)
-            {
-                <div class="rounded-lg border border-stone-700 bg-stone-800/40 px-4 py-3">
-                    <dt class="text-xs uppercase tracking-wide text-stone-500">Wzrost</dt>
-                    <dd class="mt-1 text-lg text-stone-100">@Model.Character.Height cm</dd>
-                </div>
-            }
-            @if (Model.Character.Weight > 0)
-            {
-                <div class="rounded-lg border border-stone-700 bg-stone-800/40 px-4 py-3">
-                    <dt class="text-xs uppercase tracking-wide text-stone-500">Waga</dt>
-                    <dd class="mt-1 text-lg text-stone-100">@Model.Character.Weight kg</dd>
                 </div>
             }
             @if (!string.IsNullOrWhiteSpace(Model.Character.EyeColor))
             {
                 <div class="rounded-lg border border-stone-700 bg-stone-800/40 px-4 py-3">
-                    <dt class="text-xs uppercase tracking-wide text-stone-500">Oczy</dt>
+                    <dt class="text-xs uppercase text-stone-500">Oczy</dt>
                     <dd class="mt-1 text-stone-100">@Model.Character.EyeColor</dd>
                 </div>
             }
             @if (!string.IsNullOrWhiteSpace(Model.Character.HairColor))
             {
                 <div class="rounded-lg border border-stone-700 bg-stone-800/40 px-4 py-3">
-                    <dt class="text-xs uppercase tracking-wide text-stone-500">Włosy</dt>
+                    <dt class="text-xs uppercase text-stone-500">Włosy</dt>
                     <dd class="mt-1 text-stone-100">@Model.Character.HairColor</dd>
                 </div>
             }
         </dl>
-
         @if (!string.IsNullOrWhiteSpace(Model.Character.Description))
         {
-            <div class="mt-6">
-                <h2 class="mb-2 text-sm font-semibold uppercase tracking-wide text-stone-500">Opis postaci</h2>
-                <p class="whitespace-pre-wrap leading-relaxed text-stone-300">@Model.Character.Description</p>
-            </div>
+            <p class="mt-6 whitespace-pre-wrap leading-relaxed text-stone-300">@Model.Character.Description</p>
         }
         else
         {
-            <p class="mt-6 text-sm text-stone-500">Brak opisu postaci.</p>
+            <p class="mt-6 text-sm text-stone-500">Brak opisu.</p>
         }
     </div>
 
-    <!-- Statystyki -->
     <div data-tab-panel="stats" class="hidden p-6">
         <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-stone-500">Cechy</h2>
         <div class="mb-8 overflow-x-auto rounded-lg border border-stone-700">
             <table class="w-full min-w-[640px] text-sm">
                 <thead class="bg-stone-800/80 text-stone-400">
                     <tr>
-                        <th class="px-3 py-2 text-left font-medium"></th>
+                        <th class="px-3 py-2 text-left"></th>
                         @foreach (var attr in orderedAttrs)
-                        {
-                            <th class="px-2 py-2 text-center font-medium" title="@attr.Type">@attr.Type.GetDisplayName()</th>
-                        }
+                        { <th class="px-2 py-2 text-center" title="@attr.Type">@attr.Type.GetDisplayName()</th> }
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-800">
                     <tr class="text-stone-300">
-                        <td class="px-3 py-2 font-medium text-stone-400">Początkowa</td>
+                        <td class="px-3 py-2 text-stone-400">Początkowa</td>
                         @foreach (var attr in orderedAttrs) { <td class="px-2 py-2 text-center">@attr.Basic</td> }
                     </tr>
                     <tr class="text-stone-300">
-                        <td class="px-3 py-2 font-medium text-stone-400">Rozwinięcia</td>
+                        <td class="px-3 py-2 text-stone-400">Rozwinięcia</td>
                         @foreach (var attr in orderedAttrs) { <td class="px-2 py-2 text-center text-amber-400/90">@attr.Advance</td> }
                     </tr>
                     <tr class="bg-stone-800/30 font-semibold text-stone-100">
                         <td class="px-3 py-2">Aktualna</td>
                         @foreach (var attr in orderedAttrs) { <td class="px-2 py-2 text-center text-amber-300">@attr.Total</td> }
+                    </tr>
+                    <tr class="text-stone-400">
+                        <td class="px-3 py-2">Bonus</td>
+                        @foreach (var attr in orderedAttrs) { <td class="px-2 py-2 text-center">@(attr.Total / 10)</td> }
                     </tr>
                 </tbody>
             </table>
@@ -151,25 +161,101 @@
                 <tbody class="divide-y divide-stone-800">
                     @foreach (var skill in basicSkills)
                     {
-                        Model.SkillLookup.TryGetValue(skill.Id, out var charSkill);
-                        var advances = charSkill?.Advances ?? 0;
-                        var attr = Model.AttributeLookup[skill.GoverningAttribute];
-                        var baseValue = attr.Basic + attr.Advance;
-                        var total = baseValue + advances;
-                        var highlighted = advances > 0;
-                        <tr class="@(highlighted ? "bg-amber-950/20" : "") text-stone-300">
-                            <td class="px-4 py-2 @(highlighted ? "font-medium text-stone-100" : "")">@skill.Name</td>
-                            <td class="px-2 py-2 text-center text-stone-500">@skill.GoverningAttribute.GetDisplayName()</td>
-                            <td class="px-2 py-2 text-center">@baseValue</td>
-                            <td class="px-2 py-2 text-center @(advances > 0 ? "text-amber-400" : "")">@advances</td>
-                            <td class="px-2 py-2 text-center font-medium text-stone-100">@total</td>
-                        </tr>
+                        var charSkills = Model.Character.Skills.Where(cs => cs.SkillId == skill.Id).ToList();
+                        var attr = attrLookup[skill.GoverningAttribute];
+                        var baseValue = attr.Total;
+
+                        if (skill.HasSpecialization)
+                        {
+                            if (CharacterRulesHelper.UsesImplicitBasicSpecialization(skill.Name))
+                            {
+                                var podstawowaAdv = charSkills
+                                    .Where(cs => string.IsNullOrEmpty(cs.Specialization) ||
+                                        string.Equals(cs.Specialization, CharacterRulesHelper.BasicSpecializationLabel, StringComparison.OrdinalIgnoreCase))
+                                    .Sum(cs => cs.Advances);
+                                var podstawowaName = CharacterRulesHelper.FormatSkillDisplay(skill.Name, true, null);
+                                <tr class="@(podstawowaAdv > 0 ? "bg-amber-950/20" : "") text-stone-300">
+                                    <td class="px-4 py-2 @(podstawowaAdv > 0 ? "font-medium text-stone-100" : "")">@podstawowaName</td>
+                                    <td class="px-2 py-2 text-center text-stone-500">@skill.GoverningAttribute.GetDisplayName()</td>
+                                    <td class="px-2 py-2 text-center">@baseValue</td>
+                                    <td class="px-2 py-2 text-center @(podstawowaAdv > 0 ? "text-amber-400" : "")">@podstawowaAdv</td>
+                                    <td class="px-2 py-2 text-center font-medium text-stone-100">@(baseValue + podstawowaAdv)</td>
+                                </tr>
+                                foreach (var cs in charSkills.Where(cs => !string.IsNullOrEmpty(cs.Specialization) &&
+                                    !string.Equals(cs.Specialization, CharacterRulesHelper.BasicSpecializationLabel, StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    var highlighted = cs.Advances > 0;
+                                    <tr class="@(highlighted ? "bg-amber-950/20" : "") text-stone-300">
+                                        <td class="px-4 py-2 @(highlighted ? "font-medium text-stone-100" : "")">@cs.DisplayName</td>
+                                        <td class="px-2 py-2 text-center text-stone-500">@skill.GoverningAttribute.GetDisplayName()</td>
+                                        <td class="px-2 py-2 text-center">@baseValue</td>
+                                        <td class="px-2 py-2 text-center text-amber-400">@cs.Advances</td>
+                                        <td class="px-2 py-2 text-center font-medium text-stone-100">@(baseValue + cs.Advances)</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                var specEntries = charSkills.Where(cs => !string.IsNullOrEmpty(cs.Specialization)).ToList();
+                                if (!specEntries.Any())
+                                {
+                                    var emptyAdv = charSkills.Sum(cs => cs.Advances);
+                                    var emptyName = CharacterRulesHelper.FormatSkillDisplay(skill.Name, true, null);
+                                    <tr class="@(emptyAdv > 0 ? "bg-amber-950/20" : "") text-stone-300">
+                                        <td class="px-4 py-2 @(emptyAdv > 0 ? "font-medium text-stone-100" : "")">@emptyName</td>
+                                        <td class="px-2 py-2 text-center text-stone-500">@skill.GoverningAttribute.GetDisplayName()</td>
+                                        <td class="px-2 py-2 text-center">@baseValue</td>
+                                        <td class="px-2 py-2 text-center @(emptyAdv > 0 ? "text-amber-400" : "")">@emptyAdv</td>
+                                        <td class="px-2 py-2 text-center font-medium text-stone-100">@(baseValue + emptyAdv)</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var cs in specEntries)
+                                    {
+                                        var highlighted = cs.Advances > 0;
+                                        <tr class="@(highlighted ? "bg-amber-950/20" : "") text-stone-300">
+                                            <td class="px-4 py-2 @(highlighted ? "font-medium text-stone-100" : "")">@cs.DisplayName</td>
+                                            <td class="px-2 py-2 text-center text-stone-500">@skill.GoverningAttribute.GetDisplayName()</td>
+                                            <td class="px-2 py-2 text-center">@baseValue</td>
+                                            <td class="px-2 py-2 text-center @(highlighted ? "text-amber-400" : "")">@cs.Advances</td>
+                                            <td class="px-2 py-2 text-center font-medium text-stone-100">@(baseValue + cs.Advances)</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            continue;
+                        }
+
+                        if (!charSkills.Any())
+                        {
+                            <tr class="text-stone-300">
+                                <td class="px-4 py-2">@skill.Name</td>
+                                <td class="px-2 py-2 text-center text-stone-500">@skill.GoverningAttribute.GetDisplayName()</td>
+                                <td class="px-2 py-2 text-center">@baseValue</td>
+                                <td class="px-2 py-2 text-center">0</td>
+                                <td class="px-2 py-2 text-center font-medium text-stone-100">@baseValue</td>
+                            </tr>
+                            continue;
+                        }
+                        foreach (var cs in charSkills)
+                        {
+                            var advances = cs.Advances;
+                            var highlighted = advances > 0;
+                            <tr class="@(highlighted ? "bg-amber-950/20" : "") text-stone-300">
+                                <td class="px-4 py-2 @(highlighted ? "font-medium text-stone-100" : "")">@cs.DisplayName</td>
+                                <td class="px-2 py-2 text-center text-stone-500">@skill.GoverningAttribute.GetDisplayName()</td>
+                                <td class="px-2 py-2 text-center">@baseValue</td>
+                                <td class="px-2 py-2 text-center @(advances > 0 ? "text-amber-400" : "")">@advances</td>
+                                <td class="px-2 py-2 text-center font-medium text-stone-100">@(baseValue + advances)</td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
         </div>
 
-        @if (advancedSkills.Any())
+        @if (trainedAdvanced.Any())
         {
             <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-stone-500">Umiejętności zaawansowane</h2>
             <div class="mb-8 overflow-x-auto rounded-lg border border-stone-700">
@@ -184,18 +270,17 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-800">
-                        @foreach (var skill in advancedSkills)
+                        @foreach (var cs in trainedAdvanced)
                         {
-                            var charSkill = Model.SkillLookup[skill.Id];
-                            var advances = charSkill.Advances;
-                            var attr = Model.AttributeLookup[skill.GoverningAttribute];
-                            var baseValue = attr.Basic + attr.Advance;
+                            var skill = cs.Skill!;
+                            var attr = attrLookup[skill.GoverningAttribute];
+                            var baseValue = attr.Total;
                             <tr class="bg-amber-950/20 text-stone-300">
-                                <td class="px-4 py-2 font-medium text-stone-100">@skill.Name</td>
+                                <td class="px-4 py-2 font-medium text-stone-100">@cs.DisplayName</td>
                                 <td class="px-2 py-2 text-center text-stone-500">@skill.GoverningAttribute.GetDisplayName()</td>
                                 <td class="px-2 py-2 text-center">@baseValue</td>
-                                <td class="px-2 py-2 text-center text-amber-400">@advances</td>
-                                <td class="px-2 py-2 text-center font-medium text-stone-100">@(baseValue + advances)</td>
+                                <td class="px-2 py-2 text-center text-amber-400">@cs.Advances</td>
+                                <td class="px-2 py-2 text-center font-medium text-stone-100">@(baseValue + cs.Advances)</td>
                             </tr>
                         }
                     </tbody>
@@ -204,21 +289,21 @@
         }
 
         <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-stone-500">Talenty</h2>
-        @if (!Model.Character.Talents.Any())
+        @if (!orderedTalents.Any())
         {
-            <p class="text-sm text-stone-500">Brak talentów.</p>
+            <p class="text-sm text-stone-500">Brak talentów (sprawdź, czy nazwy w pochodzeniu/profesji są w talents.json).</p>
         }
         else
         {
             <div class="space-y-3">
-                @foreach (var t in Model.Character.Talents)
+                @foreach (var t in orderedTalents)
                 {
                     var max = Model.TalentRules.GetMaxLevel(Model.Character, t.Talent);
                     var effects = t.Talent.TestEffects;
                     <div class="rounded-lg border border-stone-700 bg-stone-800/40 p-4">
                         <div class="flex flex-wrap items-baseline justify-between gap-2">
-                            <h3 class="font-display text-lg text-amber-300">@t.Talent.Name</h3>
-                            <span class="rounded bg-stone-700 px-2 py-0.5 text-xs font-medium text-stone-300">Poziom @t.Level / @max</span>
+                            <h3 class="font-display text-lg text-amber-300">@t.DisplayName</h3>
+                            <span class="rounded bg-stone-700 px-2 py-0.5 text-xs text-stone-300">Poziom @t.Level / @max</span>
                         </div>
                         @if (!string.IsNullOrWhiteSpace(t.Talent.Description))
                         {
@@ -229,8 +314,7 @@
                             <ul class="mt-3 space-y-1 border-t border-stone-700 pt-3 text-sm">
                                 @foreach (var e in effects)
                                 {
-                                    var effectiveLevel = Math.Max(t.Level, 1);
-                                    var bonus = (effectiveLevel - 1) * e.BonusPerLevelAbove1;
+                                    var bonus = (Math.Max(t.Level, 1) - 1) * e.BonusPerLevelAbove1;
                                     <li class="text-stone-300">
                                         <span class="text-stone-100">@e.SkillName</span>
                                         @if (!string.IsNullOrEmpty(e.Condition)) { <span class="text-stone-500">(@e.Condition)</span> }
@@ -245,15 +329,15 @@
         }
     </div>
 
-    <!-- Ekwipunek -->
     <div data-tab-panel="gear" class="hidden p-6">
+        <div class="mb-6 flex items-center gap-4 rounded-lg border border-stone-700 bg-stone-800/40 px-4 py-3">
+            <span class="text-xs font-semibold uppercase tracking-wide text-stone-500">Maks. obciążenie</span>
+            <span class="font-display text-xl font-bold text-amber-400">@Model.MaxEncumbrance</span>
+        </div>
         @if (items.Any())
         {
             <ul class="divide-y divide-stone-800 rounded-lg border border-stone-700">
-                @foreach (var it in items)
-                {
-                    <li class="px-4 py-3 text-stone-300">@it</li>
-                }
+                @foreach (var it in items) { <li class="px-4 py-3 text-stone-300">@it</li> }
             </ul>
         }
         else

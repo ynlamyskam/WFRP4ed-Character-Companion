@@ -1,14 +1,14 @@
 [
   {
     "Class": "Dworzanie",
-    "Name": "Gladiator",
+    "Name": "Zwadźca",
     "Tiers": [
       {
-        "Name": "Pięściarz",
-        "Status": "Brąz 4",
-        "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
-        "Skills": [ "Atletyka", "Hazard", "Unik" ],
-        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+        "Name": "Szermierz",
+        "Status": "Srebro 3",
+        "Attributes": [ "WeaponSkill", "Initiative", "Agility" ],
+        "Skills": [ "Atletyka", "Broń Biała (Dowolna)", "Intuicja", "Język (Klasyczny)", "Leczenie", "Odporność", "Percepcja", "Unik", "Występy (Gawędziarstwo)", "Muzyka (Dowolna)" ],
+        "Talents": [ "Finta", "Rozproszenie Uwagi", "Zbicie Broni", "Zejście z Linii" ]
       },
       {
         "Name": "Gladiator",

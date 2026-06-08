@@ -271,5 +271,8 @@ namespace WFRP_Character_Companion.Pages.Characters
         }
 
         private static int Roll2k10() => Random.Shared.Next(1, 11) + Random.Shared.Next(1, 11);
+
+        public static string AttributeLabel(string attributeName) =>
+            Enum.TryParse<AttributeType>(attributeName, out var t) ? t.GetDisplayName() : attributeName;
     }
 }

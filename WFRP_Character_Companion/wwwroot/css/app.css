@@ -19,3 +19,93 @@ html {
 #sidebar-panel.open {
     transform: translateX(0);
 }
+
+/* Pola formularzy — ciemny motyw */
+.field-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    color: #a8a29e;
+}
+
+.field-input {
+    display: block;
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #57534e;
+    background-color: #1c1917;
+    padding: 0.5rem 0.75rem;
+    color: #f5f5f4;
+    caret-color: #fbbf24;
+}
+
+.field-input::placeholder {
+    color: #78716c;
+}
+
+.field-input:focus {
+    outline: none;
+    border-color: #d97706;
+    box-shadow: 0 0 0 1px #d97706;
+}
+
+.field-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.field-error {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: #fca5a5;
+}
+
+/* Nadpisanie domyślnych pól Identity UI (gdy używane z RCL) */
+.form-control,
+input[type="email"]:not(.field-input),
+input[type="password"]:not(.field-input),
+input[type="text"]:not(.field-input) {
+    border-radius: 0.5rem;
+    border: 1px solid #57534e;
+    background-color: #1c1917;
+    color: #f5f5f4;
+}
+
+.form-control:focus {
+    border-color: #d97706;
+    box-shadow: 0 0 0 1px #d97706;
+    background-color: #1c1917;
+    color: #f5f5f4;
+}
+
+/* Autouzupełnianie przeglądarki */
+input.field-input:-webkit-autofill,
+input.field-input:-webkit-autofill:hover,
+input.field-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f5f5f4;
+    -webkit-box-shadow: 0 0 0 1000px #1c1917 inset;
+    box-shadow: 0 0 0 1000px #1c1917 inset;
+    caret-color: #fbbf24;
+}
+
+.file-input {
+    width: 100%;
+    font-size: 0.875rem;
+    color: #a8a29e;
+}
+
+.file-input::file-selector-button {
+    margin-right: 1rem;
+    border-radius: 0.5rem;
+    border: 0;
+    background-color: #44403c;
+    padding: 0.5rem 1rem;
+    color: #e7e5e4;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.file-input::file-selector-button:hover {
+    background-color: #57534e;
+}

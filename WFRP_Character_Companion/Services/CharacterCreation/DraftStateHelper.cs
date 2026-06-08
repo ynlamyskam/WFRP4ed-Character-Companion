@@ -80,5 +80,40 @@ namespace WFRP_Character_Companion.Services.CharacterCreation
             state[key] = json;
             return state;
         }
+
+        public record TalentEntry(string Name, string? Specialization);
+
+        public static List<TalentEntry> GetTalentEntries(Dictionary<string, JsonElement> state, string key)
+        {
+            if (!state.TryGetValue(key, out var el))
+                return [];
+
+            if (el.ValueKind == JsonValueKind.Array)
+            {
+                var list = new List<TalentEntry>();
+                foreach (var item in el.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.String)
+                    {
+                        var s = item.GetString();
+                        if (!string.IsNullOrEmpty(s))
+                            list.Add(new TalentEntry(s, null));
+                    }
+                    else if (item.ValueKind == JsonValueKind.Object)
+                    {
+                        var name = item.TryGetProperty("name", out var n) ? n.GetString() :
+                                   item.TryGetProperty("Name", out var n2) ? n2.GetString() : null;
+                        if (string.IsNullOrEmpty(name)) continue;
+                        string? spec = null;
+                        if (item.TryGetProperty("specialization", out var sp)) spec = sp.GetString();
+                        else if (item.TryGetProperty("Specialization", out var sp2)) spec = sp2.GetString();
+                        list.Add(new TalentEntry(name, spec));
+                    }
+                }
+                return list;
+            }
+
+            return GetStringList(state, key).Select(s => new TalentEntry(s, null)).ToList();
+        }
     }
 }

@@ -7,8 +7,8 @@
         "Name": "Pięściarz",
         "Status": "Brąz 4",
         "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
-        "Skills": [ "Atletyka", "Hazard", "Unik" ],
-        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+        "Skills": [ "Atletyka", "Hazard", "Unik", "Broń Biała (Bijatyka)", "Mocna Głowa", "Wiedza (Lokalna)", "Zastraszanie", "Broń Biała (Dowolna)", "Odporność", "Opanowanie" ],
+        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka", "Odwrócenie Szans", "Skrócenie Dystansu" ]
       },
       {
         "Name": "Gladiator",

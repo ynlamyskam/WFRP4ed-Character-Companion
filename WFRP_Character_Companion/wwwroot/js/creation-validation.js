@@ -89,31 +89,22 @@
     document.querySelectorAll('[data-validate="origin-skills"]').forEach((form) => {
         form.addEventListener('submit', (e) => {
             clearFormError(form);
-            const plus3 = Array.from(form.querySelectorAll('select[name^="skill_plus3_"]'))
-                .map(s => s.value).filter(Boolean);
-            const plus5 = Array.from(form.querySelectorAll('select[name^="skill_plus5_"]'))
-                .map(s => s.value).filter(Boolean);
-
-            if (new Set(plus3).size !== plus3.length) {
+            const rows = Array.from(form.querySelectorAll('[data-skill-row]'));
+            let plus3 = 0;
+            let plus5 = 0;
+            for (const row of rows) {
+                const bonus = row.querySelector('input[type="radio"]:checked')?.value;
+                if (bonus === '3') plus3++;
+                if (bonus === '5') plus5++;
+            }
+            if (plus3 > 3) {
                 e.preventDefault();
-                showFormError(form, 'Ta sama umiejętność nie może być wybrana dwa razy w sekcji +3.');
+                showFormError(form, 'Możesz wybrać maksymalnie 3 umiejętności na +3.');
                 return;
             }
-            if (new Set(plus5).size !== plus5.length) {
+            if (plus5 > 3) {
                 e.preventDefault();
-                showFormError(form, 'Ta sama umiejętność nie może być wybrana dwa razy w sekcji +5.');
-                return;
-            }
-            const overlap = plus3.filter(s => plus5.includes(s));
-            if (overlap.length) {
-                e.preventDefault();
-                showFormError(form, 'Ta sama umiejętność nie może być jednocześnie na +3 i +5.');
-                return;
-            }
-            const distinct = new Set([...plus3, ...plus5]);
-            if (distinct.size > 6) {
-                e.preventDefault();
-                showFormError(form, 'Możesz wzmocnić maksymalnie 6 różnych umiejętności.');
+                showFormError(form, 'Możesz wybrać maksymalnie 3 umiejętności na +5.');
             }
         });
     });
@@ -121,7 +112,12 @@
     document.querySelectorAll('[data-validate="rearrange-rolls"]').forEach((form) => {
         form.addEventListener('submit', (e) => {
             clearFormError(form);
-            const values = Array.from(form.querySelectorAll('select[name^="rollIndex_"]')).map(s => s.value);
+            const values = Array.from(form.querySelectorAll('input[name^="rollIndex_"]')).map(s => s.value);
+            if (values.some(v => v === '')) {
+                e.preventDefault();
+                showFormError(form, 'Przypisz wszystkie rzuty do cech.');
+                return;
+            }
             if (new Set(values).size !== values.length) {
                 e.preventDefault();
                 showFormError(form, 'Każdy rzut może być przypisany tylko do jednej cechy.');
@@ -140,7 +136,10 @@
             el.classList.toggle('text-red-400', total !== target);
             el.classList.toggle('text-emerald-400', total === target);
         };
-        form.querySelectorAll(selector).forEach(inp => inp.addEventListener('input', update));
+        form.querySelectorAll(selector).forEach(inp => {
+            inp.addEventListener('input', update);
+            inp.addEventListener('change', update);
+        });
         update();
     });
 })();

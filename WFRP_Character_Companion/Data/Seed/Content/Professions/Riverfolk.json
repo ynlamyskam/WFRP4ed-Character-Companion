@@ -1,14 +1,14 @@
 [
   {
     "Class": "Wodniacy",
-    "Name": "Gladiator",
+    "Name": "Przewoźnik",
     "Tiers": [
       {
-        "Name": "Pięściarz",
-        "Status": "Brąz 4",
-        "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
-        "Skills": [ "Atletyka", "Hazard", "Unik" ],
-        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+        "Name": "Chłopiec Pokładowy",
+        "Status": "Srebro 1",
+        "Attributes": [ "Agility", "Strength", "Toughness" ],
+        "Skills": [ "Broń Biała (Bijatyka)", "Hazard", "Język (Dowolny)", "Mocna Głowa", "Odporność", "Plotkowanie", "Pływanie", "Unik", "Wioślarstwo", "Żeglarstwo (Barki)" ],
+        "Talents": [ "Cios Poniżej Pasa", "Mocne Plecy", "Rybak", "Świetny Pływak" ]
       },
       {
         "Name": "Gladiator",

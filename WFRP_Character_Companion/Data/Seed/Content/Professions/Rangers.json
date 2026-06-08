@@ -1,14 +1,14 @@
 [
   {
     "Class": "Wędrowcy",
-    "Name": "Gladiator",
+    "Name": "Strażnik Dróg",
     "Tiers": [
       {
-        "Name": "Pięściarz",
-        "Status": "Brąz 4",
-        "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
-        "Skills": [ "Atletyka", "Hazard", "Unik" ],
-        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+        "Name": "Mytnik",
+        "Status": "Brąz 5",
+        "Attributes": [ "BallisticSkill", "Toughness", "Initiative" ],
+        "Skills": [ "Broń Biała (Podstawowa)", "Opanowanie", "Wiedza (Trakty)", "Broń Zasięgowa (Kusza)", "Hazard", "Mocna Głowa", "Percepcja", "Plotkowanie", "Przekupstwo", "Targowanie" ],
+        "Talents": [ "Defraudant", "Numizmatyka", "Strzelec Wyborowy", "Zimna Krew" ]
       },
       {
         "Name": "Gladiator",

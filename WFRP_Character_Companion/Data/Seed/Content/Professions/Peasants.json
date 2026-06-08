@@ -1,14 +1,14 @@
 [
   {
     "Class": "Pospólstwo",
-    "Name": "Gladiator",
+    "Name": "Zielarz",
     "Tiers": [
       {
-        "Name": "Pięściarz",
-        "Status": "Brąz 4",
-        "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
-        "Skills": [ "Atletyka", "Hazard", "Unik" ],
-        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+        "Name": "Zbieracz Ziół",
+        "Status": "Brąz 2",
+        "Attributes": [ "Toughness", "Initiative", "Agility" ],
+        "Skills": [ "Odporność", "Oswajanie", "Percepcja", "Pływanie", "Atletyka", "Skradanie (Wieś)", "Rzemiosło (Zielarstwo)", "Sztuka Przetrwania", "Wiedza (Zioła)", "Wspinaczka" ],
+        "Talents": [ "Doświadczony Wędrowiec (Dowolny Teren)", "Włóczykij", "Wyczucie Kierunku", "Wyczulony Zmysł (Smak)" ]
       },
       {
         "Name": "Gladiator",

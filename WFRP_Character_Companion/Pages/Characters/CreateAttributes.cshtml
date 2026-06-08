@@ -23,7 +23,7 @@
                     {
                         var t = Model.AttributeOrder[i];
                         <tr>
-                            <td class="py-2 pr-4 text-stone-200">@t</td>
+                            <td class="py-2 pr-4 text-stone-200">@CreateAttributesModel.AttributeLabel(t)</td>
                             <td class="py-2 pr-4">@Model.Bases[t]</td>
                             <td class="py-2 pr-4 font-mono text-amber-400">@Model.Rolls[i]</td>
                             <td class="py-2 font-semibold">@(Model.Bases[t] + Model.Rolls[i])</td>
@@ -46,26 +46,24 @@
     }
     else if (Model.Stage == "rearrange")
     {
-        <p class="mb-4 text-stone-400">Przestaw wylosowane wartości między cechami.</p>
-        <form method="post" asp-page-handler="AcceptRearrange" data-validate="rearrange-rolls">
-            <div class="mb-4 overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="border-b border-stone-700 text-stone-400"><tr><th class="py-2">Cecha</th><th class="py-2">Roll</th></tr></thead>
-                    <tbody>
-                        @for (int i = 0; i < Model.AttributeOrder.Count; i++)
-                        {
-                            <tr class="border-b border-stone-800">
-                                <td class="py-2 pr-4">@Model.AttributeOrder[i]</td>
-                                <td class="py-2">
-                                    <select name="rollIndex_@i" class="rounded-lg border border-stone-600 bg-stone-800 px-2 py-1 text-stone-100">
-                                        @for (int j = 0; j < Model.Rolls.Count; j++)
-                                        { <option value="@j">@Model.Rolls[j]</option> }
-                                    </select>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+        <p class="mb-2 text-stone-400">Kliknij rzut z puli, potem cechę, do której go przypisujesz. Kliknięcie przypisanego rzutu zwraca go do puli.</p>
+        <form method="post" asp-page-handler="AcceptRearrange" data-validate="rearrange-rolls" data-rearrange-rolls
+              data-rolls='@System.Text.Json.JsonSerializer.Serialize(Model.Rolls)' class="space-y-6">
+            <div>
+                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-500">Pula rzutów 2k10</p>
+                <div data-roll-pool class="flex min-h-[3rem] flex-wrap gap-2 rounded-lg border border-stone-700 bg-stone-800/40 p-3"></div>
+            </div>
+            <div class="space-y-2">
+                @for (int i = 0; i < Model.AttributeOrder.Count; i++)
+                {
+                    <div class="flex items-center justify-between gap-4 rounded-lg border border-stone-700 bg-stone-800/50 px-4 py-3">
+                        <span class="text-sm font-medium text-stone-200">@CreateAttributesModel.AttributeLabel(Model.AttributeOrder[i])</span>
+                        <div data-roll-slot class="shrink-0">
+                            <span data-roll-display class="flex min-h-[2.5rem] min-w-[3rem] items-center justify-center rounded-lg border border-dashed border-stone-600 font-mono text-stone-500">—</span>
+                            <input type="hidden" name="rollIndex_@i" value="" />
+                        </div>
+                    </div>
+                }
             </div>
             <div class="flex gap-3">
                 <button type="submit" class="rounded-lg bg-emerald-800 px-4 py-2 text-white hover:bg-emerald-700">Zatwierdź (+25 PD)</button>
@@ -83,7 +81,7 @@
                 @for (int i = 0; i < Model.AttributeOrder.Count; i++)
                 {
                     <label class="flex items-center justify-between gap-3 rounded-lg border border-stone-700 bg-stone-800/50 px-3 py-2">
-                        <span class="text-sm text-stone-300">@Model.AttributeOrder[i]</span>
+                        <span class="text-sm text-stone-300">@CreateAttributesModel.AttributeLabel(Model.AttributeOrder[i])</span>
                         <input type="number" name="manual_@i" min="4" max="18" value="10" class="w-20 rounded border border-stone-600 bg-stone-900 px-2 py-1 text-center text-stone-100" />
                     </label>
                 }
@@ -96,13 +94,13 @@
         @if (Model.AdvanceAttributes.Any())
         {
             <p class="mb-2 text-stone-400">Rozdziel dokładnie <strong class="text-amber-400">5</strong> punktów rozwinięć (Tier 1 profesji).</p>
-            <p class="mb-4 text-sm text-stone-500">Przydzielono: <span data-live-sum data-target="5" data-sum-selector="input[name^=&quot;advance_&quot;]" class="font-mono font-bold">0</span> / 5</p>
             <form method="post" asp-page-handler="AcceptAdvances" data-validate="advance-points" data-target="5">
+                <p class="mb-4 text-sm text-stone-500">Przydzielono: <span data-live-sum data-target="5" data-sum-selector="input[name^='advance_']" class="font-mono font-bold">0</span> / 5</p>
                 <div class="mb-4 space-y-2">
                     @for (int i = 0; i < Model.AdvanceAttributes.Count; i++)
                     {
                         <label class="flex items-center justify-between gap-3 rounded-lg border border-stone-700 bg-stone-800/50 px-3 py-2">
-                            <span class="text-sm text-stone-300">@Model.AdvanceAttributes[i]</span>
+                            <span class="text-sm text-stone-300">@CreateAttributesModel.AttributeLabel(Model.AdvanceAttributes[i])</span>
                             <input type="number" name="advance_@i" min="0" max="5" value="0" class="w-20 rounded border border-stone-600 bg-stone-900 px-2 py-1 text-center text-stone-100" />
                         </label>
                     }
@@ -121,19 +119,8 @@
 </div>
 
 @section Scripts {
-    <script>
-        (function(){
-            const selects = document.querySelectorAll('select[name^="rollIndex_"]');
-            function updateOptions() {
-                const chosen = Array.from(selects).map(s => s.value);
-                selects.forEach(s => {
-                    Array.from(s.options).forEach(opt => {
-                        opt.disabled = chosen.includes(opt.value) && s.value !== opt.value;
-                    });
-                });
-            }
-            selects.forEach(s => s.addEventListener('change', updateOptions));
-            updateOptions();
-        })();
-    </script>
+  @if (Model.Stage == "rearrange")
+  {
+    <script src="~/js/rearrange-rolls.js" asp-append-version="true"></script>
+  }
 }

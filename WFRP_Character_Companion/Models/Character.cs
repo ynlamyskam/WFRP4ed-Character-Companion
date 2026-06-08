@@ -34,6 +34,12 @@ namespace WFRP_Character_Companion.Models
         // serialized items list
         public string ItemsJson { get; set; } = "[]";
 
+        public int ExperienceEarned { get; set; }
+        public int ExperienceSpent { get; set; }
+        public int CorruptionPoints { get; set; }
+
+        public int AvailableExperience => ExperienceEarned - ExperienceSpent;
+
 
         public CharacterSkill? GetSkill(int skillId)
         {

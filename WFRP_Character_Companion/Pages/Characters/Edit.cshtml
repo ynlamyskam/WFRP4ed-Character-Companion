@@ -1,0 +1,71 @@
+@page "{id:int}"
+@model WFRP_Character_Companion.Pages.Characters.EditModel
+@{
+    ViewData["Title"] = $"Edycja — {Model.Character.Name}";
+}
+
+<a asp-page="/Characters/Details" asp-route-id="@Model.Character.Id" class="mb-6 inline-block text-sm text-stone-500 transition hover:text-amber-400">&larr; Wróć do karty</a>
+
+<h1 class="font-display mb-6 text-2xl font-bold text-amber-500 sm:text-3xl">Edycja postaci</h1>
+
+<div class="space-y-6">
+    <div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+        <form method="post" class="space-y-5">
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Name">Imię</label>
+                <input asp-for="Input.Name" required class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100 focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600" />
+            </div>
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div>
+                    <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Age">Wiek</label>
+                    <input asp-for="Input.Age" type="number" min="0" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100" />
+                </div>
+                <div>
+                    <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Height">Wzrost (cm)</label>
+                    <input asp-for="Input.Height" type="number" min="0" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100" />
+                </div>
+                <div>
+                    <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Weight">Waga (kg)</label>
+                    <input asp-for="Input.Weight" type="number" min="0" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100" />
+                </div>
+                <div>
+                    <label class="mb-1 block text-sm text-stone-400" asp-for="Input.EyeColor">Oczy</label>
+                    <input asp-for="Input.EyeColor" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100" />
+                </div>
+            </div>
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.HairColor">Włosy</label>
+                <input asp-for="Input.HairColor" class="w-full max-w-md rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100" />
+            </div>
+            <div>
+                <label class="mb-1 block text-sm text-stone-400" asp-for="Input.Description">Opis</label>
+                <textarea asp-for="Input.Description" rows="5" class="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100"></textarea>
+            </div>
+            <button type="submit" class="rounded-lg bg-emerald-800 px-6 py-3 font-medium text-white transition hover:bg-emerald-700">Zapisz zmiany</button>
+        </form>
+    </div>
+
+    <div class="rounded-xl border border-stone-700 bg-stone-900/80 p-6 shadow-xl">
+        <h2 class="mb-1 text-sm font-semibold uppercase tracking-wide text-stone-500">Ekwipunek</h2>
+        <p class="mb-4 text-sm text-stone-400">Maksymalne obciążenie: <strong class="text-amber-400">@Model.MaxEncumbrance</strong></p>
+        <form method="post" asp-page-handler="AddItem" asp-route-id="@Model.Character.Id" class="mb-4 flex flex-col gap-3 sm:flex-row">
+            <input type="text" name="newItem" placeholder="Nazwa przedmiotu"
+                   class="flex-1 rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-stone-100" />
+            <button type="submit" class="rounded-lg bg-stone-700 px-4 py-2 text-stone-200 hover:bg-stone-600">Dodaj</button>
+        </form>
+        @if (Model.Items.Any())
+        {
+            <ul class="divide-y divide-stone-800 rounded-lg border border-stone-700">
+                @for (var i = 0; i < Model.Items.Count; i++)
+                {
+                    <li class="flex items-center justify-between gap-3 px-4 py-2">
+                        <span class="text-stone-300">@Model.Items[i]</span>
+                        <form method="post" asp-page-handler="RemoveItem" asp-route-id="@Model.Character.Id" asp-route-index="@i">
+                            <button type="submit" class="text-xs text-red-400 hover:text-red-300">Usuń</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

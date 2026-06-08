@@ -2,18 +2,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WFRP_Character_Companion.Data;
+using WFRP_Character_Companion.Helpers;
 using WFRP_Character_Companion.Models;
 using WFRP_Character_Companion.Services.CharacterCreation;
+using WFRP_Character_Companion.Services.Content;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace WFRP_Character_Companion.Pages.Characters
 {
-    public class CreateDetailsModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager, CharacterDraftService draftService) : PageModel
+    public class CreateDetailsModel(
+        ApplicationDbContext db,
+        UserManager<ApplicationUser> userManager,
+        CharacterDraftService draftService,
+        TalentSyncService talentSync,
+        IWebHostEnvironment env) : PageModel
     {
         private readonly ApplicationDbContext _db = db;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly CharacterDraftService _draftService = draftService;
+        private readonly TalentSyncService _talentSync = talentSync;
+        private readonly IWebHostEnvironment _env = env;
 
         public string Description { get; set; } = string.Empty;
 
@@ -38,7 +47,9 @@ namespace WFRP_Character_Companion.Pages.Characters
 
             var attributeNames = Enum.GetNames<AttributeType>().ToHashSet(StringComparer.OrdinalIgnoreCase);
             var skills = await _db.Skills.ToListAsync();
-            var skillNames = skills.Select(s => s.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var talentsPath = Path.Combine(_env.ContentRootPath, "Data", "Seed", "Content", "talents.json");
+            _talentSync.SyncFromFile(talentsPath);
+            var allTalents = await _db.Talents.ToListAsync();
 
             var character = new Character
             {
@@ -60,31 +71,52 @@ namespace WFRP_Character_Companion.Pages.Characters
             character.EyeColor = DraftStateHelper.GetString(state, "EyeColor");
             character.HairColor = DraftStateHelper.GetString(state, "HairColor");
             character.Description = desc;
+            character.ExperienceEarned = draft.Experience;
+            character.ExperienceSpent = 0;
+            character.CorruptionPoints = 0;
 
             foreach (var key in state.Keys.Where(k => k.StartsWith("Advance_")))
             {
-                var name = key["Advance_".Length..];
-                if (attributeNames.Contains(name))
+                var rawKey = key["Advance_".Length..];
+                if (attributeNames.Contains(rawKey))
                     continue;
-                if (!skillNames.Contains(name))
-                    continue;
+
+                var (skillName, spec) = CharacterRulesHelper.ParseSkillStateKey(rawKey);
+                var skill = skills.FirstOrDefault(s => string.Equals(s.Name, skillName, StringComparison.OrdinalIgnoreCase));
+                if (skill == null) continue;
 
                 var val = DraftStateHelper.GetInt(state, key);
-                var skill = skills.First(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase));
-                character.Skills.Add(new CharacterSkill { SkillId = skill.Id, Advances = val });
+                var existing = character.Skills.FirstOrDefault(cs =>
+                    cs.SkillId == skill.Id &&
+                    string.Equals(cs.Specialization ?? "", spec ?? "", StringComparison.OrdinalIgnoreCase));
+                if (existing != null)
+                    existing.Advances += val;
+                else
+                    character.Skills.Add(new CharacterSkill { SkillId = skill.Id, Advances = val, Specialization = spec });
             }
 
-            var talentNames = DraftStateHelper.GetStringList(state, "OriginTalents");
+            var originTalents = DraftStateHelper.GetTalentEntries(state, "OriginTalents");
             var professionTalent = DraftStateHelper.GetString(state, "ProfessionTier1Talent");
             if (!string.IsNullOrEmpty(professionTalent))
-                talentNames.Add(professionTalent);
-
-            var talents = await _db.Talents.ToListAsync();
-            foreach (var tn in talentNames.Distinct(StringComparer.OrdinalIgnoreCase))
             {
-                var t = talents.FirstOrDefault(x => string.Equals(x.Name, tn, StringComparison.OrdinalIgnoreCase));
+                var (pn, ps) = CreateRaceSkillsAndTalentsModel.ParseTalentKey(professionTalent);
+                originTalents.Add(new DraftStateHelper.TalentEntry(pn, ps));
+            }
+
+            foreach (var tn in originTalents
+                         .GroupBy(t => (CharacterRulesHelper.NormalizeName(t.Name), t.Specialization ?? ""))
+                         .Select(g => g.First()))
+            {
+                var t = _talentSync.FindTalent(allTalents, tn.Name);
                 if (t != null)
-                    character.Talents.Add(new CharacterTalent { TalentId = t.Id, Level = 1 });
+                {
+                    character.Talents.Add(new CharacterTalent
+                    {
+                        TalentId = t.Id,
+                        Level = 1,
+                        Specialization = tn.Specialization
+                    });
+                }
             }
 
             var items = DraftStateHelper.GetStringList(state, "Items");

@@ -1,4 +1,6 @@
-﻿namespace WFRP_Character_Companion.Models
+﻿using WFRP_Character_Companion.Helpers;
+
+namespace WFRP_Character_Companion.Models
 {
     public class CharacterSkill
     {
@@ -13,5 +15,10 @@
         public string? Specialization { get; set; }
 
         public int Advances { get; set; }
+
+        public string DisplayName => CharacterRulesHelper.FormatSkillDisplay(
+            Skill?.Name ?? string.Empty,
+            Skill?.HasSpecialization ?? false,
+            Specialization);
     }
 }

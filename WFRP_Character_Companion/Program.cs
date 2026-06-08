@@ -22,34 +22,19 @@ namespace WFRP_Character_Companion
                 options.UseSqlite(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddRazorPages();
             builder.Services.AddScoped<TalentRulesService>();
             builder.Services.AddScoped<CharacterDraftService>();
             builder.Services.AddScoped<CreationContentService>();
+            builder.Services.AddScoped<IContentParser<TalentImportDto, Talent>>(_ =>
+                new JsonContentParser<TalentImportDto, Talent>(TalentImportMapper.Map));
+            builder.Services.AddScoped<TalentSyncService>();
             builder.Services.AddScoped<IContentImporter<Talent>>(sp =>
             {
                 var db = sp.GetRequiredService<ApplicationDbContext>();
-
-                var parser = new JsonContentParser<TalentImportDto, Talent>(dto =>
-                {
-                    return new Talent
-                    {
-                        Name = dto.Name,
-                        Description = dto.Description,
-                        MaxLevelType = dto.MaxLevelType,
-                        FixedMaxLevel = dto.FixedMaxLevel,
-                        MaxLevelAttributes = dto.MaxLevelAttributes ?? [],
-                        TestEffects = dto.Tests?.Select(x => new TalentTestEffect
-                        {
-                            SkillName = x.Skill,
-                            Condition = x.Condition,
-                            BonusPerLevelAbove1 = x.BonusPerLevelAbove1
-                        }).ToList() ?? []
-                    };
-                });
-
+                var parser = sp.GetRequiredService<IContentParser<TalentImportDto, Talent>>();
                 return new ContentImporter<TalentImportDto, Talent>(db, parser);
             });
 
@@ -134,9 +119,20 @@ namespace WFRP_Character_Companion
 
                 db.Database.Migrate();
                 CampaignMigrationFix.ApplyIfNeeded(db);
+                CharacterSchemaFix.ApplyIfNeeded(db);
+
+                var unconfirmed = db.Users.Where(u => !u.EmailConfirmed).ToList();
+                if (unconfirmed.Count > 0)
+                {
+                    foreach (var u in unconfirmed)
+                        u.EmailConfirmed = true;
+                    db.SaveChanges();
+                }
 
                 var talentImporter = scope.ServiceProvider.GetRequiredService<IContentImporter<Talent>>();
                 talentImporter.Import("Data/Seed/Content/talents.json");
+                var talentSync = scope.ServiceProvider.GetRequiredService<TalentSyncService>();
+                talentSync.SyncFromFile("Data/Seed/Content/talents.json");
 
                 var skillImporter = scope.ServiceProvider.GetRequiredService<IContentImporter<Skill>>();
                 skillImporter.Import("Data/Seed/Content/skills.json");

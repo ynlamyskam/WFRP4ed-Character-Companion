@@ -80,7 +80,7 @@
           "type": "Choice",
           "options": [
             { "name": "Niegodny Uwagi" },
-            { "name": "Czytanie/pisanie" }
+            { "name": "Czytanie/Pisanie" }
           ]
         },
         {
@@ -307,7 +307,7 @@
         {
           "type": "Choice",
           "options": [
-            { "name": "Czytanie/pisanie" },
+            { "name": "Czytanie/Pisanie" },
             { "name": "Pomocny" }
           ]
         },

@@ -1,14 +1,14 @@
 [
   {
     "Class": "Mieszczanie",
-    "Name": "Gladiator",
+    "Name": "Żebrak",
     "Tiers": [
       {
-        "Name": "Pięściarz",
-        "Status": "Brąz 4",
-        "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
-        "Skills": [ "Atletyka", "Hazard", "Unik" ],
-        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+        "Name": "Biedak",
+        "Status": "Brąz 0",
+        "Attributes": [ "Toughness", "Agility", "Fellowship" ],
+        "Skills": [ "Atletyka", "Charyzma", "Intuicja", "Mocna Głowa", "Odporność", "Opanowanie", "Skradanie (Miasto)", "Unik", "Sekretne Znaki (Wagabundy)", "Broń Biała (Bijatyka)" ],
+        "Talents": [ "Naciągacz", "Niezwykle Odporny", "Odporny na (Choroby)", "Wstrzemięźliwy" ]
       },
       {
         "Name": "Gladiator",

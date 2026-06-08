@@ -1,14 +1,14 @@
 [
   {
     "Class": "Łotry",
-    "Name": "Gladiator",
+    "Name": "Złodziej",
     "Tiers": [
       {
-        "Name": "Pięściarz",
-        "Status": "Brąz 4",
-        "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
-        "Skills": [ "Atletyka", "Hazard", "Unik" ],
-        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+        "Name": "Bandzior",
+        "Status": "Brąz 1",
+        "Attributes": [ "Initiative", "Agility", "Willpower" ],
+        "Skills": [ "Atletyka", "Intuicja", "Odporność", "Opanowanie", "Broń Biała (Podstawowa)", "Język (Złodziejska Grypsera)", "Percepcja", "Skradanie (Miasto)", "Unik", "Wspinaczka" ],
+        "Talents": [ "Chodu!", "Ogłuszenie", "Przestępca", "Ulicznik" ]
       },
       {
         "Name": "Gladiator",

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WFRP_Character_Companion.Data;
 
@@ -10,9 +11,11 @@ using WFRP_Character_Companion.Data;
 namespace WFRP_Character_Companion.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260608072248_AddTalentSpecialization")]
+    partial class AddTalentSpecialization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -288,18 +291,9 @@ namespace WFRP_Character_Companion.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CorruptionPoints")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("ExperienceEarned")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ExperienceSpent")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("EyeColor")
                         .IsRequired()

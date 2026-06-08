@@ -93,7 +93,7 @@
         {
           "type": "Choice",
           "options": [
-            { "name": "Czytanie/pisanie" },
+            { "name": "Czytanie/Pisanie" },
             { "name": "Nieustępliwy" }
           ]
         },
@@ -198,7 +198,7 @@
         {
           "type": "Choice",
           "options": [
-            { "name": "Czytanie/pisanie" },
+            { "name": "Czytanie/Pisanie" },
             { "name": "Nieugięty" }
           ]
         },

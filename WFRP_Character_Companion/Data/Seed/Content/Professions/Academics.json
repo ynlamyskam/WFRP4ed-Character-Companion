@@ -1,14 +1,14 @@
 [
   {
     "Class": "Uczeni",
-    "Name": "Gladiator",
+    "Name": "Medyk",
     "Tiers": [
       {
-        "Name": "Pięściarz",
+        "Name": "Student Medycyny",
         "Status": "Brąz 4",
-        "Attributes": [ "WeaponSkill", "Strength", "Toughness" ],
-        "Skills": [ "Atletyka", "Hazard", "Unik" ],
-        "Talents": [ "Cios Poniżej Pasa", "Żelazna Szczęka" ]
+        "Attributes": [ "Agility", "Intelligence", "Willpower" ],
+        "Skills": [ "Leczenie", "Odporność", "Opanowanie", "Percepcja", "Język (Klasyczny)", "Badania Naukowe", "Powożenie", "Przekupstwo", "Zwinne Palce" ],
+        "Talents": [ "Czytanie/Pisanie", "Mól Książkowy", "Ogłuszenie", "Pierwsza Pomoc" ]
       },
       {
         "Name": "Gladiator",
